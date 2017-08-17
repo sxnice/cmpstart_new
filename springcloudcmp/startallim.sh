@@ -26,17 +26,59 @@ ssh-interconnect(){
 #启动cmp
 start_internode(){
 		echo_green "启动CMP开始..."
+		#启动主控节点1或集中式启动串行启动！
+		local k=0
 		for i in "${SSH_HOST[@]}"
 		do
+			echo "启动节点"$i
+			ssh $i <<EOF
+			su - $cmpuser
+			umask 077
+			cd "$CURRENT_DIR"
+			./startIM.sh
+			exit
+EOF
+			echo "节点"$i"启动完成"
+			break
+		done
+		
+		#启动其他节点!
+		for i in "${SSH_HOST[@]}"
+		do
+		if [ "$k" $eq 0 ];then
+			let k=k+1
+			continue
+		fi
 		echo "启动节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
 		 umask 077
 		 cd "$CURRENT_DIR"
-		 ./startIM.sh
+		 ./startIM_BX.sh
 		 exit
 EOF
-		echo "complete"
+		let k=k+1
+		echo "发启启动指令成功"
+		done
+		
+		#检测其他节点服务是否成功!
+		k=0
+		for i in "${SSH_HOST[@]}"
+		do
+		if [ "$k" $eq 0 ];then
+			let k=k+1
+			continue
+		fi
+		echo "启动节点"$i
+		 ssh $i <<EOF
+		 su - $cmpuser
+		 umask 077
+		 cd "$CURRENT_DIR"
+		 ./imstart_chk.sh
+		 exit
+EOF
+		let k=k+1
+		echo "节点启动成功"
 		done
 		echo_green "启动CMP完成..."
 }
