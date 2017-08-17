@@ -1,5 +1,26 @@
 source /etc/environment
 PRG="$0"
+porteureka=8761
+portconfig=8888
+portactivemq=20891
+porttaskengine=20881
+porti18nserver=20888
+portcmdb=20883
+portgatherframe=20882
+portvspheremanage=20886
+portvsphereagent=20887
+portmessage=20889
+portalarmcenter=20885
+porttaskjob=20884
+portservicemonitor=20890
+portzuulmanager=20892
+porteseemanager=20893
+portgmccmanager=20894
+portimtask=28085
+portimapigateway=28082
+portimprovider=28084
+portim3rdinf=28086
+portimweb=8443
 sleeptime=2
 
 while [ -h "$PRG" ]; do

@@ -256,5 +256,4 @@ echo $pIDzuulmanager
 if [ "$pIDzuulmanager" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartzuulmanager.sh &>/dev/null &
 fi
-
 fi

@@ -318,7 +318,7 @@ EOF
 		#启动其他节点!
 		for i in "${SSH_HOST[@]}"
 		do
-		if [ "$k" $eq 0 ];then
+		if [ "$k" -eq 0 ];then
 			let k=k+1
 			continue
 		fi
@@ -338,7 +338,7 @@ EOF
 		k=0
 		for i in "${SSH_HOST[@]}"
 		do
-		if [ "$k" $eq 0 ];then
+		if [ "$k" -eq 0 ];then
 			let k=k+1
 			continue
 		fi
