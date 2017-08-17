@@ -4,7 +4,7 @@ hosts="$@"
 for i in $hosts
 do
 echo "配置控制节点"$i 
-ostype=`head -n 1 /etc/issue | awk '{print $1}'`
+ostype=`ssh $i head -n 1 /etc/issue | awk '{print $1}'`
 #开放端口外部访问
 ssh  $i <<EOF
 		iptables -P INPUT ACCEPT
