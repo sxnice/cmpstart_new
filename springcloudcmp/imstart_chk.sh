@@ -129,28 +129,6 @@ fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "4" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "4" ]; then
 #启动检测-----------------------------------------------------------
-echo "check servicemonitor"
-pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
-while [ "$pIDservicemonitor" = "" ]
-  do
-  sleep $sleeptime
-  pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDservicemonitor &>/dev/null &
-  echo -n "."
-done
-echo "servicemonitor start success!"
-
-echo "check im-task-start"
-pIimtask=`lsof -i :$portimtask|grep  "LISTEN" | awk '{print $2}'`
-while [ "$pIimtask" = "" ]
-  do
-  sleep $sleeptime
-  pIimtask=`lsof -i :$portimtask|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIimtask &>/dev/null &
-  echo -n "."
-done
-echo "im-task-start success!"
-
 echo "check im-provider-start"
 pIimprovider=`lsof -i :$portimprovider|grep  "LISTEN" | awk '{print $2}'`
 while [ "$pIimprovider" = "" ]
@@ -172,6 +150,17 @@ while [ "$pI3rdinf" = "" ]
   echo -n "."
 done
 echo "im-3rdinf-start success!"
+
+echo "check servicemonitor"
+pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
+while [ "$pIDservicemonitor" = "" ]
+  do
+  sleep $sleeptime
+  pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIDservicemonitor &>/dev/null &
+  echo -n "."
+done
+echo "servicemonitor start success!"
 #启动检测-----------------------------end-------------------------------------
 fi
 
