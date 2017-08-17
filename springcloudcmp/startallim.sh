@@ -53,6 +53,7 @@ EOF
 		echo "启动节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
+		 source /etc/environment
 		 umask 077
 		 cd "$CURRENT_DIR"
 		 ./startIM_BX.sh
@@ -70,16 +71,17 @@ EOF
 			let k=k+1
 			continue
 		fi
-		echo "启动节点"$i
+		echo "检测节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
+		 source /etc/environment
 		 umask 077
 		 cd "$CURRENT_DIR"
 		 ./imstart_chk.sh
 		 exit
 EOF
 		let k=k+1
-		echo "节点启动成功"
+		echo "节点检测成功"
 		done
 		echo_green "启动CMP完成..."
 }

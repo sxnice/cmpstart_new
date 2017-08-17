@@ -344,7 +344,7 @@ EOF
 			let k=k+1
 			continue
 		fi
-		echo "启动节点"$i
+		echo "检测节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
@@ -354,7 +354,7 @@ EOF
 		 exit
 EOF
 		let k=k+1
-		echo "节点启动成功"
+		echo "节点检测成功"
 		done
 		echo_green "启动CMP完成..."
 }
