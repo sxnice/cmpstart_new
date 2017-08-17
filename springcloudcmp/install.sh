@@ -20,7 +20,7 @@ CURRENT_DIR="/springcloudcmp"
 cmpuser="cmpimuser"
 cmppass="Pbu4@123"
 #节点IP组，用空格格开
-SSH_H="10.143.132.187"
+SSH_H="192.168.3.97"
 #MYSQLIP 单机
 MYSQL_H="10.143.132.187"
 #MYSQL相关密码
@@ -306,6 +306,7 @@ start_internode(){
 			echo "启动节点"$i
 			ssh $i <<EOF
 			su - $cmpuser
+			source /etc/environment
 			umask 077
 			cd "$CURRENT_DIR"
 			./startIM.sh
@@ -325,6 +326,7 @@ EOF
 		echo "启动节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
+		 source /etc/environment
 		 umask 077
 		 cd "$CURRENT_DIR"
 		 ./startIM_BX.sh
@@ -345,6 +347,7 @@ EOF
 		echo "启动节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
+		 source /etc/environment
 		 umask 077
 		 cd "$CURRENT_DIR"
 		 ./imstart_chk.sh

@@ -252,6 +252,7 @@ start_internode(){
 			echo "启动节点"$i
 			ssh $i <<EOF
 			su - $cmpuser
+			source /etc/environment
 			umask 077
 			cd "$CURRENT_DIR"
 			./startIM.sh
@@ -271,6 +272,7 @@ EOF
 		echo "启动节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
+		 source /etc/environment
 		 umask 077
 		 cd "$CURRENT_DIR"
 		 ./startIM_BX.sh
@@ -291,6 +293,7 @@ EOF
 		echo "启动节点"$i
 		 ssh $i <<EOF
 		 su - $cmpuser
+		 source /etc/environment
 		 umask 077
 		 cd "$CURRENT_DIR"
 		 ./imstart_chk.sh

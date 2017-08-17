@@ -9,7 +9,7 @@ source ./colorecho
 #安装目录
 CURRENT_DIR="/springcloudcmp"
 #节点IP组，用空格格开
-SSH_H="10.143.132.187"
+SSH_H="192.168.3.97"
 #用户名
 cmpuser="cmpimuser"
 #-----------------------------------------------
@@ -32,6 +32,7 @@ start_internode(){
                  ssh $i <<EOF
                  su - $cmpuser
                  umask 077
+		 source /etc/environment
                  cd "$CURRENT_DIR"
                  ./startIM.sh
                  exit
