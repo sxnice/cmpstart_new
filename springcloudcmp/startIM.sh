@@ -71,7 +71,7 @@ while [ "$pIDconfig" = "" ]
   echo -n "."
 done
 echo "springbootconfig start success!"
-sleep 10
+sleep 20
 fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "1" ]; then
@@ -83,8 +83,15 @@ echo $pIDtaskengine
 if [ "$pIDtaskengine" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstarttaskengine.sh &>/dev/null &
 fi
-
-
+#taskengine要建表，需先启动
+while [ "$pIDtaskengine" = "" ]
+  do
+  sleep $sleeptime
+  pIDtaskengine=`lsof -i :$porttaskengine|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIDtaskengine &>/dev/null &
+  echo -n "."
+done
+echo "taskengine start success!"
 
 echo "start activemqserver"
 pIDactivemq=`lsof -i :$portactivemq|grep  "LISTEN" | awk '{print $2}'`
@@ -103,14 +110,6 @@ fi
 
 
 #启动检测-----------------------------start-------------------------------------
-while [ "$pIDtaskengine" = "" ]
-  do
-  sleep $sleeptime
-  pIDtaskengine=`lsof -i :$porttaskengine|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDtaskengine &>/dev/null &
-  echo -n "."
-done
-echo "taskengine start success!"
 
 while [ "$pIDactivemq" = "" ]
   do
@@ -132,9 +131,7 @@ echo "messageserver start success!"
 #启动检测--------------------------------end---------------------------------
 fi
 
-
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "2" ]; then
-
 #启动i18nserver
 echo "start i18nserver"
 pIDi18nserver=`lsof -i :$porti18nserver|grep  "LISTEN" | awk '{print $2}'`
@@ -207,7 +204,6 @@ echo "vspheremanage start success!"
 fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "3" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "3" ]; then
-
 #启动alarmcenter
 echo "start alarmcenter"
 pIDalarmcenter=`lsof -i :$portalarmcenter|grep  "LISTEN" | awk '{print $2}'`
@@ -216,7 +212,6 @@ if [ "$pIDalarmcenter" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartalarmcenter.sh &>/dev/null &
 fi
 
-
 #启动taskjob
 echo "start taskjob"
 pIDtaskjob=`lsof -i :$porttaskjob|grep  "LISTEN" | awk '{print $2}'`
@@ -224,7 +219,6 @@ echo $pIDtaskjob
 if [ "$pIDtaskjob" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartTaskjob.sh &>/dev/null &
 fi
-
 
 #启动检测-----------------------------start-------------------------------------
 while [ "$pIDalarmcenter" = "" ]
@@ -249,15 +243,6 @@ fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "4" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "4" ]; then
 
-
-#启动servicemonitor
-echo "start servicemonitor"
-pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
-echo $pIDservicemonitor
-if [ "$pIDservicemonitor" = "" ] ; then
-nohup "$CURRENT_DIR"/background/springbootstartservicemonitor.sh &>/dev/null &
-fi
-
 #启动imtask
 echo "start im-task-start"
 #检测imtask是否启动完成
@@ -266,6 +251,15 @@ echo $pIimtask
 if [ "$pIimtask" = "" ] ; then
 nohup "$CURRENT_DIR"/im/im-task-start.sh &>/dev/null &
 fi
+#imtask要建表，需先启动----------------------------
+while [ "$pIimtask" = "" ]
+  do
+  sleep $sleeptime
+  pIimtask=`lsof -i :$portimtask|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIimtask &>/dev/null &
+  echo -n "."
+done
+echo "im-task-start success!"
 
 #启动improvider
 echo "start im-provider-start"
@@ -285,25 +279,15 @@ if [ "$pI3rdinf" = "" ] ; then
 nohup "$CURRENT_DIR"/im/im-3rdinf-start.sh &>/dev/null &
 fi
 
+#启动servicemonitor
+echo "start servicemonitor"
+pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
+echo $pIDservicemonitor
+if [ "$pIDservicemonitor" = "" ] ; then
+nohup "$CURRENT_DIR"/background/springbootstartservicemonitor.sh &>/dev/null &
+fi
+
 #启动检测-----------------------------------------------------------
-while [ "$pIDservicemonitor" = "" ]
-  do
-  sleep $sleeptime
-  pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDservicemonitor &>/dev/null &
-  echo -n "."
-done
-echo "servicemonitor start success!"
-
-while [ "$pIimtask" = "" ]
-  do
-  sleep $sleeptime
-  pIimtask=`lsof -i :$portimtask|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIimtask &>/dev/null &
-  echo -n "."
-done
-echo "im-task-start success!"
-
 while [ "$pIimprovider" = "" ]
   do
   sleep $sleeptime
@@ -321,11 +305,19 @@ while [ "$pI3rdinf" = "" ]
   echo -n "."
 done
 echo "im-3rdinf-start success!"
+
+while [ "$pIDservicemonitor" = "" ]
+  do
+  sleep $sleeptime
+  pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIDservicemonitor &>/dev/null &
+  echo -n "."
+done
+echo "servicemonitor start success!"
 #启动检测-----------------------------end-------------------------------------
 fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "5" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "5" ]; then
-
 #启动imweb
 echo "start im-web-start"
 #检测imweb是否启动完成
@@ -384,7 +376,6 @@ echo "gmcc-manager success!"
 fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "2" ] || [ "$nodetype" = "3" ]; then
-
 #启动gatherframe
 echo "start gatherframe"
 pIDgatherframe=`lsof -i :$portgatherframe|grep  "LISTEN" | awk '{print $2}'`
@@ -422,7 +413,3 @@ echo "zuulmanager start success!"
 
 #启动检测-----------------------------end---------------------------------------
 fi
-
-
-
-
