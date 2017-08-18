@@ -96,6 +96,7 @@ pIDactivemq=`lsof -i :$portactivemq|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDactivemq 
 if [ "$pIDactivemq" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartactivemqserver.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动message
@@ -104,6 +105,7 @@ pIDmessage=`lsof -i :$portmessage|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDmessage
 if [ "$pIDmessage" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartmessage.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 fi
@@ -116,6 +118,7 @@ pIDi18nserver=`lsof -i :$porti18nserver|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDi18nserver
 if [ "$pIDi18nserver" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstarti18nserver.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动cmdb
@@ -124,6 +127,7 @@ pIDcmdb=`lsof -i :$portcmdb|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDcmdb
 if [ "$pIDcmdb" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartcmdb.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动vsphereagent
@@ -132,6 +136,7 @@ pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDvsphereagent
 if [ "$pIDvsphereagent" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartvsphereagent.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动vspheremanage
@@ -140,6 +145,7 @@ pIDvspheremanage=`lsof -i :$portvspheremanage|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDvspheremanage
 if [ "$pIDvspheremanage" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartvspheremanage.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 fi
@@ -151,6 +157,7 @@ pIDalarmcenter=`lsof -i :$portalarmcenter|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDalarmcenter
 if [ "$pIDalarmcenter" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartalarmcenter.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动taskjob
@@ -159,6 +166,7 @@ pIDtaskjob=`lsof -i :$porttaskjob|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDtaskjob
 if [ "$pIDtaskjob" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartTaskjob.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 fi
@@ -190,6 +198,7 @@ pIimprovider=`lsof -i :$portimprovider|grep  "LISTEN" | awk '{print $2}'`
 echo $pIimprovider
 if [ "$pIimprovider" = "" ] ; then
 nohup "$CURRENT_DIR"/im/im-provider-start.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动importim3rdinf
@@ -199,6 +208,7 @@ pI3rdinf=`lsof -i :$portim3rdinf|grep  "LISTEN" | awk '{print $2}'`
 echo $pI3rdinf
 if [ "$pI3rdinf" = "" ] ; then
 nohup "$CURRENT_DIR"/im/im-3rdinf-start.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动servicemonitor
@@ -207,6 +217,7 @@ pIDservicemonitor=`lsof -i :$portservicemonitor|grep  "LISTEN" | awk '{print $2}
 echo $pIDservicemonitor
 if [ "$pIDservicemonitor" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartservicemonitor.sh &>/dev/null &
+sleep $sleeptime
 fi
 fi
 
@@ -218,6 +229,7 @@ pIimweb=`lsof -i :$portimweb|grep  "LISTEN" | awk '{print $2}'`
 echo $pIimweb
 if [ "$pIimweb" = "" ] ; then
 nohup "$CURRENT_DIR"/im/im-web-start.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动esee
@@ -227,6 +239,7 @@ pIesee=`lsof -i :$porteseemanager|grep  "LISTEN" | awk '{print $2}'`
 echo $pIesee
 if [ "$pIesee" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstarteseemanager.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动gmcc
@@ -236,6 +249,7 @@ pIgmcc=`lsof -i :$portgmccmanager|grep  "LISTEN" | awk '{print $2}'`
 echo $pIgmcc
 if [ "$pIgmcc" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartgmccmanager.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 fi
@@ -247,6 +261,7 @@ pIDgatherframe=`lsof -i :$portgatherframe|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDgatherframe
 if [ "$pIDgatherframe" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartgatherframe.sh &>/dev/null &
+sleep $sleeptime
 fi
 
 #启动zuulmanager
@@ -255,5 +270,6 @@ pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDzuulmanager 
 if [ "$pIDzuulmanager" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartzuulmanager.sh &>/dev/null &
+sleep $sleeptime
 fi
 fi

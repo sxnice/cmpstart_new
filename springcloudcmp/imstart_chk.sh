@@ -149,7 +149,7 @@ echo "taskjob start success!"
 fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "4" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "3" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "4" ]; then
-#启动检测-----------------------------------------------------------
+#启动检测-----------------------------start-----------------------------------
 echo "check im-provider-start"
 pIimprovider=`lsof -i :$portimprovider|grep  "LISTEN" | awk '{print $2}'`
 while [ "$pIimprovider" = "" ]
