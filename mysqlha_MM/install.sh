@@ -120,8 +120,8 @@ mysql_install(){
 								scp -r ../packages/centos6_keepalived "$i":/root/
 								ssh $i rpm -Uvh ~/centos6_keepalived/*
 						elif [ "$ostype" == "centos_7" ]; then
-								scp ../packages/centos7_iptables/* "$i":/root/
-						ssh $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm
+								scp ../packages/centos7_keepalived/* "$i":/root/
+						ssh $i rpm -Uvh ~/keepalived-1.2.13-9.el7_3.x86_64.rpm
 						fi
 				fi
 		elif [ "$os" == "ubuntu" ]; then

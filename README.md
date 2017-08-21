@@ -22,4 +22,3 @@
 1、把mysqlha目录下的*.cnf放到mysql_5.7.19/support-files目录下；
 2、把mysqlha目录下的mysql.server放到mysql_5.7.19/support-files目录下；
 3、修改mysqlha目录下的*.sh的权限为755;
-4、执行./init6.sh可安装，目前仅支持一主多从模式。
