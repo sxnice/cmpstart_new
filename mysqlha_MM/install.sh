@@ -5,9 +5,11 @@ shopt -s nullglob
 source ./colorecho
 
 MYSQL_DIR="/usr/local/mysql"
+KEEPALIVED_DIR="/usr/local/keepalived"
 #---------------可修改配置参数------------------
-#MYSQL的主从，仅支持一主从多
+#MYSQL的主主，仅支持双主
 MYSQL_HA="10.143.132.187 192.168.3.97"
+VIP="10.143.132.213"
 #MYSQL相关密码
 MYSQL_ROOT_PASSWORD="Pbu4@123"
 MYSQL_EVUSER_PASSWORD="Pbu4@123"
@@ -110,6 +112,18 @@ mysql_install(){
 						ssh $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm
 						fi
 				fi
+				local keepalived=`ssh  "$i" rpm -qa |grep keepalived |wc -l`
+				if [ "$keepalived" -gt 0 ]; then
+						echo "keepalived 已安装"
+				else
+						if [ "$ostype" == "centos_6" ]; then
+								scp -r ../packages/centos6_keepalived "$i":/root/
+								ssh $i rpm -Uvh ~/centos6_keepalived/*
+						elif [ "$ostype" == "centos_7" ]; then
+								scp ../packages/centos7_iptables/* "$i":/root/
+						ssh $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm
+						fi
+				fi
 		elif [ "$os" == "ubuntu" ]; then
 				local result=`ssh $i ps -ef | grep mysql | wc -l`
 						if [ "$result" -gt 1 ]; then
@@ -127,7 +141,7 @@ mysql_install(){
 									exit
 							elif [ "$ostype" == "ubuntu_14" ]; then
 									scp  ../packages/ubuntu14/* "$i":/root/
-						ssh $i dpkg -i ~/libaio1_0.3.109-4_amd64.deb  ~/libnuma1_2.0.9~rc5-1ubuntu3.14.04.2_amd64.deb  ~/openssl_1.0.1f-1ubuntu2.22_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb
+						ssh $i dpkg -i ~/libaio1_0.3.109-4_amd64.deb  ~/libnuma1_2.0.9~rc5-1ubuntu3.14.04.2_amd64.deb  ~/openssl_1.0.1f-1ubuntu2.22_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb ~/keepalived_1.a1.2.7-1ubuntu1_amd64.deb ~/libsnmp30_5.7.2~dfsg-8.1ubuntu3.2_amd64.deb ~/ipvsadm_1.a1.26-2ubuntu1_amd64.deb ~/libperl5.18_5.18.2-2ubuntu1.1_amd64.deb ~/libsnmp-base_5.7.2~dfsg-8.1ubuntu3.2_all.deb
 							elif [ "$ostype" == "ubuntu_16" ]; then
 									echo_red "$ostype"暂不提供安装
 									exit
@@ -187,15 +201,16 @@ mysqlha_settings(){
 	for i in "${MSYQLHA_HOST[@]}"
 	do
 		echo "配置数据库节点"$i
-		MYSQL_PASS=("$MYSQL_ROOT_PASSWORD" "$MYSQL_EVUSER_PASSWORD" "$MYSQL_IM_PASSWORD" "$MYSQL_REPL_PASSWORD")
 		#创建repl帐号
+		MYSQL_PASS=("$MYSQL_ROOT_PASSWORD" "$MYSQL_EVUSER_PASSWORD" "$MYSQL_IM_PASSWORD" "$MYSQL_REPL_PASSWORD")
 		ssh "$i" /root/create-repl-account.sh "${MYSQL_PASS[@]}"
 		#双主HA相互建立帐户连接
 		if [ "$k" -eq 1 ]; then
-			ssh "$i" /root/change-master.sh "${MYSQL_PASS[@]}" "${MYSQL_HA[1]}"
+			MYSQL_PASS=("$MYSQL_ROOT_PASSWORD" "$MYSQL_EVUSER_PASSWORD" "$MYSQL_IM_PASSWORD" "$MYSQL_REPL_PASSWORD" "${MSYQLHA_HOST[1]}")
+			ssh "$i" /root/change-master.sh "${MYSQL_PASS[@]}"
 		else
-
-			ssh "$i" /root/change-master.sh "${MYSQL_PASS[@]}" "${MYSQL_HA[0]}"
+			MYSQL_PASS=("$MYSQL_ROOT_PASSWORD" "$MYSQL_EVUSER_PASSWORD" "$MYSQL_IM_PASSWORD" "$MYSQL_REPL_PASSWORD" "${MSYQLHA_HOST[0]}")
+			ssh "$i" /root/change-master.sh "${MYSQL_PASS[@]}"
 		fi
 		echo "配置完成..."
 		let k=k+1
@@ -228,6 +243,29 @@ iptables-mysql(){
 	echo_green "配置iptables完成..."
 }
 
+#keeplived配置
+keeplived_settings(){
+	echo_green "配置keeplived配置开始..."
+	k=100
+	for i in "${MSYQLHA_HOST[@]}"
+	do
+	echo "配置节点"$i
+	scp ./keepalived.conf "$i":/etc/keepalived/
+	scp ./checkmysql.sh "$i":/usr/local/mysql/bin
+	ssh $i <<EOF
+		chmod 740 /usr/local/mysql/bin/checkmysql.sh
+		sed -i '/prioweight/{s/prioweight/$k/}' /etc/keepalived/keepalived.conf
+		sed -i '/vip/{s/vip/$VIP/}' /etc/keepalived/keepalived.conf
+		sed -i '/rip/{s/rip/$i/}' /etc/keepalived/keepalived.conf
+		/etc/init.d/keepalived restart
+EOF
+	let k=k-10;
+	echo "complete..."
+	done
+	echo_green "配置keeplived配置完成..."	
+	
+}
+
 echo "1-----安装数据库主备mysql5.7"
 while read item
 do
@@ -237,6 +275,7 @@ do
 		mysql_install	
 		mysqlha_settings
 		mysqlha_createdb
+		keeplived_settings
         break
         ;;
      0)
