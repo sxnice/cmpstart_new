@@ -262,8 +262,7 @@ EOF
 	let k=k-10;
 	echo "complete..."
 	done
-	echo_green "配置keeplived配置完成..."	
-	
+	echo_green "配置keeplived配置完成..."
 }
 
 echo "1-----安装数据库主备mysql5.7"
