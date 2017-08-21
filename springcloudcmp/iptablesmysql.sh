@@ -32,7 +32,7 @@ else
 	ssh  $i <<EOF
                 iptables-save > /etc/sysconfig/iptables
                 sed -i /iptables/d /etc/rc.d/rc.local
-                echo "iptables-restore < /etc/iptables" >>/etc/rc.d/rc.local
+                echo "iptables-restore < /etc/sysconfig/iptables" >>/etc/rc.d/rc.local
                 chmod u+x /etc/rc.d/rc.local
 		exit
 EOF
