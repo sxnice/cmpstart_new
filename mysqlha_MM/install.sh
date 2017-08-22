@@ -8,7 +8,7 @@ MYSQL_DIR="/usr/local/mysql"
 KEEPALIVED_DIR="/usr/local/keepalived"
 #---------------可修改配置参数------------------
 #MYSQL的主主，仅支持双主
-MYSQL_HA="10.143.132.187 192.168.3.97"
+MYSQL_HA="10.143.132.187 10.143.132.190"
 VIP="10.143.132.213"
 #MYSQL相关密码
 MYSQL_ROOT_PASSWORD="Pbu4@123"
@@ -120,8 +120,13 @@ mysql_install(){
 								scp ../packages/centos6_keepalived/* "$i":/root/
 								ssh $i rpm -Uvh ~/perl-libs-5.10.1-144.el6.x86_64.rpm ~/net-snmp-libs-5.5-60.el6.x86_64.rpm ~/perl-Pod-Simple-3.13-144.el6.x86_64.rpm ~/perl-version-0.77-144.el6.x86_64.rpm ~/perl-Module-Pluggable-3.90-144.el6.x86_64.rpm ~/perl-Pod-Escapes-1.04-144.el6.x86_64.rpm ~/perl-5.10.1-144.el6.x86_64.rpm ~/libnl-1.1.4-2.el6.x86_64.rpm ~/lm_sensors-libs-3.1.1-17.el6.x86_64.rpm ~/keepalived-1.2.13-5.el6_6.x86_64.rpm
 						elif [ "$ostype" == "centos_7" ]; then
+<<<<<<< HEAD
 								scp -r ../packages/centos7_keepalived "$i":/root/
 								ssh $i rpm -Uvh ~/centos7_keepalived/*
+=======
+								scp ../packages/centos7_keepalived/* "$i":/root/
+						ssh $i rpm -Uvh ~/keepalived-1.2.13-9.el7_3.x86_64.rpm ~/perl-*.rpm ~/groff-base-1.22.2-8.el7.x86_64.rpm ~/libnl3-3.2.28-3.el7_3.x86_64.rpm ~/lm_sensors-libs-3.4.0-4.20160601gitf9185e5.el7.x86_64.rpm ~/net-snmp*.rpm ~/tcp_wrappers-libs-7.6-77.el7.x86_64.rpm
+>>>>>>> 936636fe847248d4bb90a5e2622e20a77cb8fa10
 						fi
 				fi
 		elif [ "$os" == "ubuntu" ]; then
@@ -141,7 +146,7 @@ mysql_install(){
 									exit
 							elif [ "$ostype" == "ubuntu_14" ]; then
 									scp  ../packages/ubuntu14/* "$i":/root/
-						ssh $i dpkg -i ~/libaio1_0.3.109-4_amd64.deb  ~/libnuma1_2.0.9~rc5-1ubuntu3.14.04.2_amd64.deb  ~/openssl_1.0.1f-1ubuntu2.22_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb ~/keepalived_1.a1.2.7-1ubuntu1_amd64.deb ~/libsnmp30_5.7.2~dfsg-8.1ubuntu3.2_amd64.deb ~/ipvsadm_1.a1.26-2ubuntu1_amd64.deb ~/libperl5.18_5.18.2-2ubuntu1.1_amd64.deb ~/libsnmp-base_5.7.2~dfsg-8.1ubuntu3.2_all.deb
+						ssh $i dpkg -i ~/libaio1_0.3.109-4_amd64.deb  ~/libnuma1_2.0.9~rc5-1ubuntu3.14.04.2_amd64.deb  ~/openssl_1.0.1f-1ubuntu2.22_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb ~/keepalived_1.a1.2.7-1ubuntu1_amd64.deb ~/libsnmp30_5.7.2~dfsg-8.1ubuntu3.2_amd64.deb ~/ipvsadm_1.a1.26-2ubuntu1_amd64.deb ~/libperl5.18_5.18.2-2ubuntu1.1_amd64.deb ~/libsnmp-base_5.7.2~dfsg-8.1ubuntu3.2_all.deb ~/libnl-3-200_3.2.21-1ubuntu4.1_amd64.deb ~/libnl-genl-3-200_3.2.21-1ubuntu4.1_amd64.deb ~/libsensors4_1%3a3.3.4-2ubuntu1_amd64.deb ~/iproute_1.3.12.0-2ubuntu1_all.deb
 							elif [ "$ostype" == "ubuntu_16" ]; then
 									echo_red "$ostype"暂不提供安装
 									exit

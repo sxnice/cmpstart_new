@@ -4,7 +4,7 @@ hosts="$@"
 for i in $hosts
 do
 echo "配置节点"$i 
-ostype=`head -n 1 /etc/issue | awk '{print $1}'`
+ostype=`ssh $i head -n 1 /etc/issue | awk '{print $1}'`
 
 #开放端口外部访问
 ssh  $i <<EOF
@@ -32,7 +32,7 @@ else
 	ssh  $i <<EOF
                 iptables-save > /etc/sysconfig/iptables
                 sed -i /iptables/d /etc/rc.d/rc.local
-                echo "iptables-restore < /etc/iptables" >>/etc/rc.d/rc.local
+                echo "iptables-restore < /etc/sysconfig/iptables" >>/etc/rc.d/rc.local
                 chmod u+x /etc/rc.d/rc.local
 		exit
 EOF
