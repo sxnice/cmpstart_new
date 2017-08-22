@@ -10,8 +10,10 @@ ostype=`ssh $i head -n 1 /etc/issue | awk '{print $1}'`
 ssh  $i <<EOF
 
 		iptables -P INPUT ACCEPT
-		iptables -D INPUT -p tcp --dport 3306 -j ACCEPT
-		iptables -D INPUT -p tcp --dport 22 -j ACCEPT
+                iptables-save >/etc/iptables
+                sed -i /"-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT"/d /etc/iptables
+		sed -i /3306/d /etc/iptables
+                iptables-restore </etc/iptables
 		iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 		iptables -A INPUT -p tcp --dport 3306 -j ACCEPT
 		iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -32,6 +34,8 @@ else
 	ssh  $i <<EOF
                 iptables-save > /etc/sysconfig/iptables
                 sed -i /iptables/d /etc/rc.d/rc.local
+		sed -i /reject-with/d /etc/sysconfig/iptables
+		iptables-restore < /etc/sysconfig/iptables
                 echo "iptables-restore < /etc/sysconfig/iptables" >>/etc/rc.d/rc.local
                 chmod u+x /etc/rc.d/rc.local
 		exit
