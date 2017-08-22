@@ -120,8 +120,8 @@ mysql_install(){
 								scp ../packages/centos6_keepalived/* "$i":/root/
 								ssh $i rpm -Uvh ~/perl-libs-5.10.1-144.el6.x86_64.rpm ~/net-snmp-libs-5.5-60.el6.x86_64.rpm ~/perl-Pod-Simple-3.13-144.el6.x86_64.rpm ~/perl-version-0.77-144.el6.x86_64.rpm ~/perl-Module-Pluggable-3.90-144.el6.x86_64.rpm ~/perl-Pod-Escapes-1.04-144.el6.x86_64.rpm ~/perl-5.10.1-144.el6.x86_64.rpm ~/libnl-1.1.4-2.el6.x86_64.rpm ~/lm_sensors-libs-3.1.1-17.el6.x86_64.rpm ~/keepalived-1.2.13-5.el6_6.x86_64.rpm
 						elif [ "$ostype" == "centos_7" ]; then
-								scp ../packages/centos7_keepalived/* "$i":/root/
-						ssh $i rpm -Uvh ~/keepalived-1.2.13-9.el7_3.x86_64.rpm
+								scp -r ../packages/centos7_keepalived "$i":/root/
+								ssh $i rpm -Uvh ~/centos7_keepalived/*
 						fi
 				fi
 		elif [ "$os" == "ubuntu" ]; then
