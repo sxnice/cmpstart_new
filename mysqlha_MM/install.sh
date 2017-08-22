@@ -186,7 +186,7 @@ mysql_install(){
 			source ~/.bashrc
 			exit
 EOF
-	scp ./*.sh "$i":/root/
+
 	#分别为ROOT密码，EVUSER密码，IM密码，REP密码。
 	MYSQL_PASS=("$MYSQL_ROOT_PASSWORD" "$MYSQL_EVUSER_PASSWORD" "$MYSQL_IM_PASSWORD" "$MYSQL_REPL_PASSWORD")
 	ssh $i /root/init_mysqlha.sh "${MYSQL_PASS[@]}"
@@ -240,7 +240,7 @@ mysqlha_createdb(){
 #mysql服务器iptables配置
 iptables-mysql(){
   	echo_green "配置iptables开始..."
-        local iptable_path=./iptables2.sh
+        local iptable_path=./iptablesmysql.sh
         $iptable_path $MYSQL_H
 	echo_green "配置iptables完成..."
 }
@@ -260,6 +260,7 @@ keeplived_settings(){
 		sed -i '/vip/{s/vip/$VIP/}' /etc/keepalived/keepalived.conf
 		sed -i '/rip/{s/rip/$i/}' /etc/keepalived/keepalived.conf
 		/etc/init.d/keepalived restart
+		exit
 EOF
 	let k=k-10;
 	echo "complete..."
@@ -277,6 +278,7 @@ do
 		mysqlha_settings
 		mysqlha_createdb
 		keeplived_settings
+		iptables-mysql
         break
         ;;
      0)
