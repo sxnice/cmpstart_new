@@ -120,13 +120,10 @@ mysql_install(){
 								scp ../packages/centos6_keepalived/* "$i":/root/
 								ssh $i rpm -Uvh ~/perl-libs-5.10.1-144.el6.x86_64.rpm ~/net-snmp-libs-5.5-60.el6.x86_64.rpm ~/perl-Pod-Simple-3.13-144.el6.x86_64.rpm ~/perl-version-0.77-144.el6.x86_64.rpm ~/perl-Module-Pluggable-3.90-144.el6.x86_64.rpm ~/perl-Pod-Escapes-1.04-144.el6.x86_64.rpm ~/perl-5.10.1-144.el6.x86_64.rpm ~/libnl-1.1.4-2.el6.x86_64.rpm ~/lm_sensors-libs-3.1.1-17.el6.x86_64.rpm ~/keepalived-1.2.13-5.el6_6.x86_64.rpm
 						elif [ "$ostype" == "centos_7" ]; then
-<<<<<<< HEAD
 								scp -r ../packages/centos7_keepalived "$i":/root/
 								ssh $i rpm -Uvh ~/centos7_keepalived/*
-=======
 								scp ../packages/centos7_keepalived/* "$i":/root/
 						ssh $i rpm -Uvh ~/keepalived-1.2.13-9.el7_3.x86_64.rpm ~/perl-*.rpm ~/groff-base-1.22.2-8.el7.x86_64.rpm ~/libnl3-3.2.28-3.el7_3.x86_64.rpm ~/lm_sensors-libs-3.4.0-4.20160601gitf9185e5.el7.x86_64.rpm ~/net-snmp*.rpm ~/tcp_wrappers-libs-7.6-77.el7.x86_64.rpm
->>>>>>> 936636fe847248d4bb90a5e2622e20a77cb8fa10
 						fi
 				fi
 		elif [ "$os" == "ubuntu" ]; then
