@@ -13,10 +13,12 @@ ssh  $i <<EOF
                 iptables-save >/etc/iptables
                 sed -i /"-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT"/d /etc/iptables
 		sed -i /3306/d /etc/iptables
+		sed -i /icmp/d /etc/iptables
                 iptables-restore </etc/iptables
 		iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 		iptables -A INPUT -p tcp --dport 3306 -j ACCEPT
 		iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+		iptables -A INPUT -p icmp --icmp-type any -j ACCEPT
 		iptables -P INPUT DROP
 		exit
 EOF
