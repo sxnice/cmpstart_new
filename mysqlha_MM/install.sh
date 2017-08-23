@@ -290,7 +290,7 @@ do
 		mysqlha_settings
 		mysqlha_createdb
 		keeplived_settings
-		iptables-mysql
+	#	iptables-mysql
         break
         ;;
      0)
