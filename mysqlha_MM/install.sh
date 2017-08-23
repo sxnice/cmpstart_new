@@ -117,7 +117,7 @@ mysql_install(){
 						echo "keepalived 已安装"
 				else
 						if [ "$ostype" == "centos_6" ]; then
-								scp -r ../packages/centos6_keepalived/* "$i":/root/
+								scp -r ../packages/centos6_keepalived "$i":/root/
 								ssh $i <<EOF
                                                                         rpm -Uvh --replacepkgs ~/centos6_keepalived/*
                                                                         exit
