@@ -98,13 +98,19 @@ install-interpackage(){
 		scp -r ../packages/jdk1.8.0_131/* "$i":"$JDK_DIR"
 		scp ../packages/jce/* "$i":"$JDK_DIR"/jre/lib/security/
 		ssh $i  <<EOF
-			chmod 755 "$JDK_DIR"/bin/*
+		    chmod 755 "$JDK_DIR"/bin/*
 		    sed -i /JAVA_HOME/d /etc/profile
 		    echo JAVA_HOME="$JDK_DIR" >> /etc/profile
 		    echo PATH='\$JAVA_HOME'/bin:'\$PATH' >> /etc/profile
 		    echo CLASSPATH='\$JAVA_HOME'/jre/lib/ext:'\$JAVA_HOME'/lib/tools.jar >> /etc/profile
   	            echo export PATH JAVA_HOME CLASSPATH >> /etc/profile
 	            source /etc/profile
+		    su - $cmpuser
+                    sed -i /JAVA_HOME/d ~/.bashrc
+                    echo JAVA_HOME="$JDK_DIR" >> ~/.bashrc
+                    echo PATH='\$JAVA_HOME'/bin:'\$PATH' >> ~/.bashrc
+                    echo CLASSPATH='\$JAVA_HOME'/jre/lib/ext:'\$JAVA_HOME'/lib/tools.jar >> ~/.bashrc
+                    echo export PATH JAVA_HOME CLASSPATH >> ~/.bashrc
 		    exit
 		
 EOF

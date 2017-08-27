@@ -122,6 +122,12 @@ install-interpackage(){
 		    echo CLASSPATH='\$JAVA_HOME'/jre/lib/ext:'\$JAVA_HOME'/lib/tools.jar >> /etc/profile
   	            echo export PATH JAVA_HOME CLASSPATH >> /etc/profile
 	            source /etc/profile
+		    su - $cmpuser
+                    sed -i /JAVA_HOME/d ~/.bashrc
+                    echo JAVA_HOME="$JDK_DIR" >> ~/.bashrc
+                    echo PATH='\$JAVA_HOME'/bin:'\$PATH' >> ~/.bashrc
+                    echo CLASSPATH='\$JAVA_HOME'/jre/lib/ext:'\$JAVA_HOME'/lib/tools.jar >> ~/.bashrc
+                    echo export PATH JAVA_HOME CLASSPATH >> ~/.bashrc
 		    exit
 		
 EOF
