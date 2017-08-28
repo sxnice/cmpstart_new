@@ -614,6 +614,10 @@ EOF
 		nohup ./bin/mongod --config mongodb.conf  &>/dev/null &
 		exit
 EOF
+	#配置开机启动
+	sed -i /mongo/d /etc/rc.d/rc.local
+	echo " $MONGDO_DIR/bin/mongod --config $MONGDO_DIR/mongodb.conf" >> /etc/rc.d/rc.local
+	chmod u+x /etc/rc.d/rc.local
 	echo_green "安装完成"
 }
 

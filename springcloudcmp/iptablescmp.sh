@@ -10,10 +10,8 @@ ssh  $i <<EOF
 		iptables -P INPUT ACCEPT
 		iptables-save >/etc/iptables
 		sed -i /cmp/d /etc/iptables
-		sed -i /"-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT"/d /etc/iptables
 		iptables-restore </etc/iptables
 		
-		iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 		iptables --new cmp
 		iptables -A cmp -m state --state ESTABLISHED,RELATED -j ACCEPT
 		iptables -A cmp -p icmp --icmp-type any -j ACCEPT
@@ -21,7 +19,7 @@ ssh  $i <<EOF
 		iptables -A cmp -p tcp --dport 20892 -j ACCEPT
 		iptables -A cmp -p tcp --dport 8443 -j ACCEPT
 		iptables -A cmp -p tcp --dport 3306 -j ACCEPT
-		
+		iptables -A cmp -p tcp --dport 27017 -j ACCEPT
 		iptables -A INPUT -j cmp
 		iptables -P INPUT DROP
 		exit
