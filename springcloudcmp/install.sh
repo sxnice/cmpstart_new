@@ -588,15 +588,14 @@ mongo_install(){
 		useradd -r -m -g  mongo mongo
 		echo "修改文件权限"
 		chown -R mongo.mongo $MONGDO_DIR
-		chmod 744 $MONGDO_DIR/bin/*
+		chmod 700 $MONGDO_DIR/bin/*
 		su - mongo
 		cd $MONGDO_DIR
 		umask 077
 		mkdir -p data/logs
 		mkdir -p data/db
-		echo "启动mongodb"
-		nohup ./bin/mongod --config mongodb.conf &>/dev/null &
-		
+		echo "start mongodb"
+		nohup ./bin/mongod --dbpath=$MONGDO_DIR/data/db --logpath=$MONGDO_DIR/data/logs/mongodb.log  &>/dev/null &
 		echo "配置环境变量"
 		sed -i /mongo/d ~/.bashrc
 		echo export PATH=$MONGDO_DIR/bin:'\$PATH' >> ~/.bashrc
@@ -606,6 +605,15 @@ EOF
 	scp ./init_mongo.sh "$MYSQL_H":/root/
 	#设置mongdodb密码	 
 	ssh $MONGDO_H /root/init_mongo.sh "$MONGDO_PASSWORD"
+	echo "设置需验证登录"
+	ssh $MONGDO_H <<EOF
+		pkill mongod
+		su - mongo
+		cd $MONGDO_DIR
+		echo "restart mongodb"
+		nohup ./bin/mongod --config mongodb.conf  &>/dev/null &
+		exit
+EOF
 	echo_green "安装完成"
 }
 
