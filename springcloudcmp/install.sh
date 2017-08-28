@@ -621,6 +621,14 @@ EOF
 	echo_green "安装完成"
 }
 
+#mongo服务器iptables配置
+iptables-mongo(){
+        echo_green "配置iptables开始..."
+        local iptable_path=./iptablesmongo.sh
+        $iptable_path $MONGO_H
+        echo_green "配置iptables完成..."
+}
+
 echo_yellow "-----------一键安装说明-------------------"
 echo_yellow "1、可安装JDK1.8.0_131软件;"
 echo_yellow "2、可安装MYSQL5.7.19软件;"
@@ -702,7 +710,8 @@ do
 	;;
      [7])
 		ssh-mysqlconnect
-        mongo_install
+       		mongo_install
+		iptables-mongo
 	break;
 	;;
      0)
