@@ -9,7 +9,7 @@ nodeplanr=1
 nodenor=1
 eurekaipr=localhost
 dcnamer=DC1
-JDK_DIR="/usr/java/jdk1.8.0_131"
+JDK_DIR="/usr/java"
 
 
 #---------------可修改配置参数------------------
@@ -93,9 +93,8 @@ install-interpackage(){
 			fi
 		fi
                 echo "安装jdk1.8到节点"$i
-		ssh "$i" mkdir -p "$JDK_DIR"
-			
-		scp -r ../packages/jdk1.8.0_131/* "$i":"$JDK_DIR"
+		ssh "$i" mkdir -p "$JDK_DIR"	
+		scp -r ../packages/jdk/* "$i":"$JDK_DIR"
 		scp ../packages/jce/* "$i":"$JDK_DIR"/jre/lib/security/
 		ssh $i  <<EOF
 		    chmod 755 "$JDK_DIR"/bin/*
@@ -402,10 +401,10 @@ mysql_install(){
                         fi
         fi
 		echo_green "复制文件"
-	scp -r ../packages/mysql-5.7.19 "$MYSQL_H":/usr/local
-	ssh $MYSQL_H <<EOF
+		ssh "$MYSQL_H" mkdir -p "$MYSQL_DIR"
+		scp -r ../packages/mysql "$MYSQL_H":/usr/local
+		ssh $MYSQL_H <<EOF
 		echo "创建mysql用户"
-		mv /usr/local/mysql-5.7.19 /usr/local/mysql
 		groupadd mysql
 		useradd -r -g mysql -s /bin/false mysql
 		echo "修改文件权限"
@@ -422,7 +421,6 @@ mysql_install(){
 		chmod 644 /usr/local/mysql/data/server-key.pem
 		echo "第一次启动MYSQL"
 		/etc/init.d/mysql restart
-		#./mysqld_safe --user=mysql &
 		echo "配置开机启动"
 		chkconfig --add mysql
 		echo "配置环境变量"
@@ -449,8 +447,7 @@ iptables-mysql(){
 }
 
 echo_yellow "-----------一键安装（增量）说明-------------------"
-echo_yellow "1、可安装JDK1.8.0_131软件;"
-#echo_yellow "2、可安装MYSQL5.7.19软件;"
+echo_yellow "1、可安装JDK软件;"
 echo_yellow "2、可安装有iptables lsof软件;"
 echo_yellow "3、初始化时，建议使用root用户安装;"
 echo_yellow "4、确保.sh有执行权限，并且使用 ./xxx.sh执行;"
@@ -463,7 +460,6 @@ echo "1-----allinone服务器,每台32G内存."
 echo "2-----3台服务器,每台16G内存.2台控制节点，1台采集节点"  
 echo "3-----4台服务器,每台16G内存.3台控制节点，1台采集节点"  
 echo "4-----6台服务器,每台8G内存.5台控制节点，1台采集节点"
-#echo "5-----安装单机版mysql5.7"
 
 while read item
 do

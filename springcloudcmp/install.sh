@@ -9,7 +9,7 @@ nodeplanr=1
 nodenor=1
 eurekaipr=localhost
 dcnamer="DC1"
-JDK_DIR="/usr/java/jdk1.8.0_131"
+JDK_DIR="/usr/java"
 MYSQL_DIR="/usr/local/mysql"
 MONGDO_DIR="/usr/local/mongodb"
 
@@ -111,8 +111,7 @@ install-interpackage(){
 		fi
                 echo "安装jdk1.8到节点"$i
 		ssh "$i" mkdir -p "$JDK_DIR"
-			
-		scp -r ../packages/jdk1.8.0_131/* "$i":"$JDK_DIR"
+		scp -r ../packages/jdk/* "$i":"$JDK_DIR"
 		scp ../packages/jce/* "$i":"$JDK_DIR"/jre/lib/security/
 		ssh $i  <<EOF
 		    chmod 755 "$JDK_DIR"/bin/*
@@ -523,7 +522,7 @@ mysql_install(){
         fi
 		echo_green "复制文件"
 		ssh "$MYSQL_H" mkdir -p "$MYSQL_DIR"
-		scp -r ../packages/mysql-5.7.19/* "$MYSQL_H":"$MYSQL_DIR"
+		scp -r ../packages/mysql/* "$MYSQL_H":"$MYSQL_DIR"
 		ssh $MYSQL_H <<EOF
 		echo "创建mysql用户"
 		groupadd mysql
@@ -568,70 +567,10 @@ iptables-mysql(){
 	echo_green "配置iptables完成..."
 }
 
-#单机mongodb安装
-ssh-mysqlconnect(){
-    echo_green "建立对等互信开始..."
-        local ssh_init_path=./ssh-init.sh
-        $ssh_init_path $MONGDO_H
-        echo_green "建立对等互信完成..."
-        sleep 1
-}
-
-mongo_install(){
-		echo_green "安装单机版mongodb3.4.7开始"
-		echo "复制文件"
-		ssh "$MONGDO_H" mkdir -p "$MONGDO_DIR"
-		scp -r ../packages/mongo-3.4.7/* "$MONGDO_H":"$MONGDO_DIR"
-		ssh $MONGDO_H <<EOF
-		echo "创建mongo用户"
-		groupadd mongo
-		useradd -r -m -g  mongo mongo
-		echo "修改文件权限"
-		chown -R mongo.mongo $MONGDO_DIR
-		chmod 700 $MONGDO_DIR/bin/*
-		su - mongo
-		cd $MONGDO_DIR
-		umask 077
-		mkdir -p data/logs
-		mkdir -p data/db
-		echo "start mongodb"
-		nohup ./bin/mongod --dbpath=$MONGDO_DIR/data/db --logpath=$MONGDO_DIR/data/logs/mongodb.log  &>/dev/null &
-		echo "配置环境变量"
-		sed -i /mongo/d ~/.bashrc
-		echo export PATH=$MONGDO_DIR/bin:'\$PATH' >> ~/.bashrc
-		source ~/.bashrc
-		exit
-EOF
-	scp ./init_mongo.sh "$MYSQL_H":/root/
-	#设置mongdodb密码	 
-	ssh $MONGDO_H /root/init_mongo.sh "$MONGDO_PASSWORD"
-	echo "设置需验证登录"
-	ssh $MONGDO_H <<EOF
-		pkill mongod
-		su - mongo
-		cd $MONGDO_DIR
-		echo "restart mongodb"
-		nohup ./bin/mongod --config mongodb.conf  &>/dev/null &
-		exit
-EOF
-	#配置开机启动
-	sed -i /mongo/d /etc/rc.d/rc.local
-	echo " $MONGDO_DIR/bin/mongod --config $MONGDO_DIR/mongodb.conf" >> /etc/rc.d/rc.local
-	chmod u+x /etc/rc.d/rc.local
-	echo_green "安装完成"
-}
-
-#mongo服务器iptables配置
-iptables-mongo(){
-        echo_green "配置iptables开始..."
-        local iptable_path=./iptablesmongo.sh
-        $iptable_path $MONGO_H
-        echo_green "配置iptables完成..."
-}
 
 echo_yellow "-----------一键安装说明-------------------"
-echo_yellow "1、可安装JDK1.8.0_131软件;"
-echo_yellow "2、可安装MYSQL5.7.19软件;"
+echo_yellow "1、可安装JDK1.8软件;"
+echo_yellow "2、可安装MYSQL5.7软件;"
 echo_yellow "3、可安装有iptables lsof软件;"
 echo_yellow "4、初始化时，建议使用root用户安装;"
 echo_yellow "5、确保.sh有执行权限，并且使用 ./xxx.sh执行;"
@@ -647,7 +586,6 @@ echo "3-----4台服务器,每台16G内存.3台控制节点，1台采集节点"
 echo "4-----6台服务器,每台8G内存.5台控制节点，1台采集节点"
 echo "5-----安装单机版mysql5.7"
 echo "6-----清空部署(数据库不受影响，但升级环境禁止使用)"
-echo "7-----安装单机版mongo3.4.7"
 
 while read item
 do
@@ -706,12 +644,6 @@ do
 		ssh-interconnect
 		stop_internode
 		uninstall_internode
-	break;
-	;;
-     [7])
-		ssh-mysqlconnect
-       		mongo_install
-		iptables-mongo
 	break;
 	;;
      0)
