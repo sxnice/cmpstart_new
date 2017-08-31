@@ -28,9 +28,6 @@ MYSQL_H="10.143.132.187"
 MYSQL_ROOT_PASSWORD="Pbu4@123"
 MYSQL_EVUSER_PASSWORD="Pbu4@123"
 MYSQL_IM_PASSWORD="Pbu4@123"
-#MONGOIP 单机
-MONGDO_H="10.143.132.187"
-MONGDO_PASSWORD="Pbu4@123"
 #-----------------------------------------------
 declare -a SSH_HOST=($SSH_H)
 
