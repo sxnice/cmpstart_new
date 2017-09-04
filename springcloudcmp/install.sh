@@ -11,7 +11,6 @@ eurekaipr=localhost
 dcnamer="DC1"
 JDK_DIR="/usr/java"
 MYSQL_DIR="/usr/local/mysql"
-MONGDO_DIR="/usr/local/mongodb"
 
 
 #---------------可修改配置参数------------------

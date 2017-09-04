@@ -107,7 +107,7 @@ EOF
 				echo "CMP已关闭"
 			fi
 		else
-			echo_red "尚未创建$cmpuser用户,请手动关闭服务"
+			echo_red "尚未创建$cmpuser用户,请手动关闭进程后，再执行"
 			exit
 		fi
 		done
