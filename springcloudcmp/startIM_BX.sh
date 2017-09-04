@@ -20,7 +20,7 @@ portimapigateway=28082
 portimprovider=28084
 portim3rdinf=28086
 portimweb=8443
-sleeptime=2
+sleeptime=5
 
 while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
