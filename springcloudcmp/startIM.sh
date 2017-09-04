@@ -20,7 +20,7 @@ portimapigateway=28082
 portimprovider=28084
 portim3rdinf=28086
 portimweb=8443
-sleeptime=2
+sleeptime=5
 
 while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
@@ -71,7 +71,7 @@ while [ "$pIDconfig" = "" ]
   echo -n "."
 done
 echo "springbootconfig start success!"
-sleep 20
+sleep 30
 fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "1" ]; then
