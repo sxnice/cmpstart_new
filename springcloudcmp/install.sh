@@ -177,7 +177,7 @@ copy-internode(){
                         echo "复制文件到"$i 
                         #放根目录下
                         ssh $i mkdir -p $CURRENT_DIR
-                        scp -r ./background ./im ./config startIM.sh startIM_BX.sh stopIM.sh "$i":$CURRENT_DIR
+                        scp -r ./background ./im ./config startIM.sh startIM_BX.sh stopIM.sh imstart_chk.sh "$i":$CURRENT_DIR
                         #赋权
                         ssh $i <<EOF
                         rm -rf /tmp/spring.log
