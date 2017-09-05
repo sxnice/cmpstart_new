@@ -330,7 +330,7 @@ EOF
 			continue
 		fi
 		echo "启动节点"$i
-		 ssh -n $i <<EOF
+		 ssh -nf $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
 		 umask 077

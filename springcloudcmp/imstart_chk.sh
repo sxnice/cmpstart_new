@@ -49,7 +49,11 @@ while [ "$pIDactivemq" = "" ]
   echo -n "."
 done
 echo "activemqserver start success!"
+#启动检测--------------------------------end---------------------------------
+fi
 
+if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "2" ]; then
+#启动检测-----------------------------start-------------------------------------
 echo "check messageserver"
 pIDmessage=`lsof -i :$portmessage|grep  "LISTEN" | awk '{print $2}'`
 while [ "$pIDmessage" = "" ]
@@ -60,11 +64,7 @@ while [ "$pIDmessage" = "" ]
   echo -n "."
 done
 echo "messageserver start success!"
-#启动检测--------------------------------end---------------------------------
-fi
 
-if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "2" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "2" ]; then
-#启动检测-----------------------------start-------------------------------------
 echo "check i18nserver"
 pIDi18nserver=`lsof -i :$porti18nserver|grep  "LISTEN" | awk '{print $2}'`
 while [ "$pIDi18nserver" = "" ]
