@@ -32,12 +32,12 @@ declare -a SSH_HOST=($SSH_H)
 
 #检测操作系统
 check_ostype(){
-	local ostype=`ssh $1 head -n 1 /etc/issue | awk '{print $1}'`
+	local ostype=`ssh -n $1 head -n 1 /etc/issue | awk '{print $1}'`
 	if [ "$ostype" == "Ubuntu" ]; then
-		local version=`ssh $1 head -n 1 /etc/issue | awk  '{print $2}'| awk -F . '{print $1}'`
+		local version=`ssh -n $1 head -n 1 /etc/issue | awk  '{print $2}'| awk -F . '{print $1}'`
 		echo ubuntu_$version
 	else
-		local centos=`ssh $1 rpm -qa | grep sed | awk -F . '{print $4}'`
+		local centos=`ssh -n $1 rpm -qa | grep sed | awk -F . '{print $4}'`
 		if [ "$centos" == "el6" ]; then
 			echo centos_6
 		elif [ "$centos" == "el7" ]; then
@@ -54,7 +54,7 @@ install-interpackage(){
 		local ostype=`check_ostype $i`
 		local os=`echo $ostype | awk -F _ '{print $1}'`
 		if [ "$os" == "centos" ]; then
-        		local iptables=`ssh  "$i" rpm -qa |grep iptables |wc -l`
+        		local iptables=`ssh -n "$i" rpm -qa |grep iptables |wc -l`
        			 if [ "$iptables" -gt 0 ]; then
                 		echo "iptables 已安装"
         		else
@@ -66,7 +66,7 @@ install-interpackage(){
                         		 ssh $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm ~/iptables-services-1.4.21-17.el7.x86_64.rpm
                			 fi
         		fi
-	        	local lsof=`ssh  "$i" rpm -qa |grep lsof |wc -l`
+	        	local lsof=`ssh -n "$i" rpm -qa |grep lsof |wc -l`
                 	 if [ "$lsof" -gt 0 ]; then
                         	echo "lsof 已安装"
                		 else
@@ -78,7 +78,7 @@ install-interpackage(){
                          		 ssh $i rpm -Uvh ~/lsof-4.87-4.el7.x86_64.rpm
                			 fi
                		 fi
-			 local psmisc=`ssh  "$i" rpm -qa |grep psmisc |wc -l`
+			 local psmisc=`ssh -n "$i" rpm -qa |grep psmisc |wc -l`
                          if [ "$psmisc" -gt 0 ]; then
                                 echo "psmisc 已安装"
                          else
@@ -109,7 +109,7 @@ install-interpackage(){
 		ssh "$i" mkdir -p "$JDK_DIR"
 		scp -r ../packages/jdk/* "$i":"$JDK_DIR"
 		scp ../packages/jce/* "$i":"$JDK_DIR"/jre/lib/security/
-		ssh $i  <<EOF
+		ssh -n $i  <<EOF
 		    chmod 755 "$JDK_DIR"/bin/*
 		    sed -i /JAVA_HOME/d /etc/profile
 		    echo JAVA_HOME="$JDK_DIR" >> /etc/profile
@@ -127,7 +127,7 @@ install-interpackage(){
 		
 EOF
 		echo "系统配置节点"$i
-		ssh "$i" <<EOF
+		ssh -n "$i" <<EOF
 		    sed -i /$cmpuser/d /etc/security/limits.conf
 		    echo $cmpuser soft nproc unlimited >>/etc/security/limits.conf
 		    echo $cmpuser hard nproc unlimited >>/etc/security/limits.conf
@@ -173,10 +173,10 @@ copy-internode(){
                 do
                         echo "复制文件到"$i 
                         #放根目录下
-                        ssh $i mkdir -p $CURRENT_DIR
+                        ssh -n $i mkdir -p $CURRENT_DIR
                         scp -r ./background ./im ./config startIM.sh startIM_BX.sh stopIM.sh imstart_chk.sh "$i":$CURRENT_DIR
                         #赋权
-                        ssh $i <<EOF
+                        ssh -n $i <<EOF
                         rm -rf /tmp/spring.log
                         rm -rf /tmp/modelTypeName.data
                         chown -R $cmpuser.$cmpuser $CURRENT_DIR
@@ -252,7 +252,7 @@ env_internode(){
 
 			echo "节点："$j
 			
-			ssh $j <<EOF
+			ssh -n $j <<EOF
                         sed -i /nodeplan/d /etc/environment
 			sed -i /nodetype/d /etc/environment
 			sed -i /nodeno/d /etc/environment
@@ -310,7 +310,7 @@ start_internode(){
 		for i in "${SSH_HOST[@]}"
 		do
 			echo "启动节点"$i
-			ssh $i <<EOF
+			ssh -n $i <<EOF
 			su - $cmpuser
 			source /etc/environment
 			umask 077
@@ -330,7 +330,7 @@ EOF
 			continue
 		fi
 		echo "启动节点"$i
-		 ssh $i <<EOF
+		 ssh -n $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
 		 umask 077
@@ -351,7 +351,7 @@ EOF
 			continue
 		fi
 		echo "检测节点"$i
-		 ssh $i <<EOF
+		 ssh -n $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
 		 umask 077
@@ -372,9 +372,9 @@ stop_internode(){
 		for i in "${SSH_HOST[@]}"
 		do
 		echo "关闭节点"$i
-		local user=`ssh $i cat /etc/passwd | sed -n /$cmpuser/p |wc -l`
+		local user=`ssh -n $i cat /etc/passwd | sed -n /$cmpuser/p |wc -l`
 		if [ "$user" -eq 1 ]; then
-			local jars=`ssh $i ps -u $cmpuser | grep -v PID | wc -l`
+			local jars=`ssh -n $i ps -u $cmpuser | grep -v PID | wc -l`
 			if [ "$jars" -gt 0 ]; then
 				ssh $i <<EOF
 				killall -9 -u $cmpuser
@@ -398,7 +398,7 @@ uninstall_internode(){
 		for i in "${SSH_HOST[@]}"
 		do
 		echo "删除节点"$i
-		ssh $i <<EOF
+		ssh -n $i <<EOF
 		rm -rf "$CURRENT_DIR"
 		rm -rf /home/cmpimuser/
 		rm -rf /usr/java/
@@ -432,9 +432,9 @@ mysql_install(){
 	local ostype=`check_ostype $MYSQL_H`
 	local os=`echo $ostype | awk -F _ '{print $1}'`
         if [ "$os" == "centos" ]; then
-		local result=`ssh $MYSQL_H ps -ef | grep mysql | wc -l`
+		local result=`ssh -n $MYSQL_H ps -ef | grep mysql | wc -l`
 		if [ "$result" -gt 1 ]; then
-			local mysql_v=`ssh $MYSQL_H mysql --version | sed -n '/5.7/p' | wc -l`
+			local mysql_v=`ssh -n $MYSQL_H mysql --version | sed -n '/5.7/p' | wc -l`
 			if [ "$mysql_v" -eq 1 ]; then
 				echo_yellow "mysql 5.7已安装"
 				exit
@@ -444,7 +444,7 @@ mysql_install(){
 			fi
 		fi
 		echo_yellow "安装依赖包"
-		local libaio=`ssh  "$MYSQL_H" rpm -qa |grep libaio |wc -l`
+		local libaio=`ssh -n "$MYSQL_H" rpm -qa |grep libaio |wc -l`
 		if [ "$libaio" -eq 1 ]; then
 			echo "libaio 已安装"
 		else
@@ -456,7 +456,7 @@ mysql_install(){
                 	 	 ssh $MYSQL_H rpm -Uvh ~/libaio-0.3.109-13.el7.x86_64.rpm
 			fi
 		fi
-		local numactl=`ssh "$MYSQL_H" rpm -qa |grep numactl |wc -l`
+		local numactl=`ssh -n "$MYSQL_H" rpm -qa |grep numactl |wc -l`
 		if [ "$numactl" -gt 0 ]; then
                 	echo "numactl 已安装"
         	else
@@ -468,7 +468,7 @@ mysql_install(){
                			 ssh $MYSQL_H rpm -Uvh ~/numactl-2.0.9-6.el7_2.x86_64.rpm ~/numactl-libs-2.0.9-6.el7_2.x86_64.rpm
                		 fi
         	fi
-		local openssl=`ssh "$MYSQL_H" rpm -qa |grep openssl |wc -l`
+		local openssl=`ssh -n "$MYSQL_H" rpm -qa |grep openssl |wc -l`
 		if [ "$openssl" -gt 0 ]; then
                 	echo "openssl 已安装"
         	else
@@ -480,7 +480,7 @@ mysql_install(){
                 		ssh $MYSQL_H rpm -Uvh ~/make-3.82-23.el7.x86_64.rpm  ~/openssl-1.0.1e-60.el7_3.1.x86_64.rpm  ~/openssl-libs-1.0.1e-60.el7_3.1.x86_64.rpm
                 	fi
         	fi
-        	local iptables=`ssh  "$MYSQL_H" rpm -qa |grep iptables |wc -l`
+        	local iptables=`ssh -n "$MYSQL_H" rpm -qa |grep iptables |wc -l`
         	if [ "$iptables" -gt 0 ]; then
                 	echo "iptables 已安装"
         	else
@@ -493,9 +493,9 @@ mysql_install(){
                 	fi
         	fi
 	elif [ "$os" == "ubuntu" ]; then
-			local result=`ssh $MYSQL_H ps -ef | grep mysql | wc -l`
+			local result=`ssh -n $MYSQL_H ps -ef | grep mysql | wc -l`
                		if [ "$result" -gt 1 ]; then
-                        	 local mysql_v=`ssh $MYSQL_H mysql --version | sed -n '/5.7/p' | wc -l`
+                        	 local mysql_v=`ssh -n $MYSQL_H mysql --version | sed -n '/5.7/p' | wc -l`
                        		 if [ "$mysql_v" -eq 1 ]; then
                                 	echo_yellow "mysql 5.7已安装"
                                 	exit
@@ -519,9 +519,9 @@ mysql_install(){
                         fi
         fi
 		echo_green "复制文件"
-		ssh "$MYSQL_H" mkdir -p "$MYSQL_DIR"
+		ssh -n "$MYSQL_H" mkdir -p "$MYSQL_DIR"
 		scp -r ../packages/mysql/* "$MYSQL_H":"$MYSQL_DIR"
-		ssh $MYSQL_H <<EOF
+		ssh -n $MYSQL_H <<EOF
 		echo "创建mysql用户"
 		groupadd mysql
 		useradd -r -g mysql -s /bin/false mysql
@@ -551,7 +551,7 @@ EOF
 		scp ./init_mysql.sh "$MYSQL_H":/root/
 		#分别为ROOT密码，EVUSER密码，IM密码。
 		MYSQL_PASS=("$MYSQL_ROOT_PASSWORD" "$MYSQL_EVUSER_PASSWORD" "$MYSQL_IM_PASSWORD")
-		ssh $MYSQL_H /root/init_mysql.sh "${MYSQL_PASS[@]}"
+		ssh -n $MYSQL_H /root/init_mysql.sh "${MYSQL_PASS[@]}"
 		 
 		
 	
