@@ -209,6 +209,7 @@ env_internode(){
          		sed -i /nodetype/d ~/.bashrc
            	 	sed -i /nodeno/d ~/.bashrc
             		sed -i /eurekaip/d ~/.bashrc
+			sed -i /eurekaiprep/d ~/.bashrc
             		sed -i /dcname/d ~/.bashrc
 			
 			echo "umask 077" >> ~/.bashrc
@@ -221,6 +222,8 @@ env_internode(){
 			echo "export nodeno">>~/.bashrc
 			sed -n /eurekaip/p /etc/environment>>~/.bashrc
 			echo "export eurekaip">>~/.bashrc
+			sed -n /eurekaiprep/p /etc/environment>>~/.bashrc
+                        echo "export eurekaiprep">>~/.bashrc
 			sed -n /dcname/p /etc/environment>>~/.bashrc 
 			echo "export dcname">>~/.bashrc
 			source ~/.bashrc

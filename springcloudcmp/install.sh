@@ -259,12 +259,14 @@ env_internode(){
 			sed -i /nodetype/d /etc/environment
 			sed -i /nodeno/d /etc/environment
 			sed -i /eurekaip/d /etc/environment
+			sed -i /eurekaiprep/d /etc/environment
 			sed -i /dcname/d /etc/environment
 			
 			echo "nodeplan=$nodeplanr export nodeplan">>/etc/environment
 			echo "nodetype=$nodetyper export nodetype">>/etc/environment
 			echo "nodeno=$nodenor export nodeno">>/etc/environment 
 			echo "eurekaip=$eurekaipr export eurekaip">>/etc/environment
+			echo "eurekaiprep=$eurekaipr export eurekaiprep">>/etc/environment
 			echo "dcname=$dcnamer export dcname">>/etc/environment 			
 			source /etc/environment
 
@@ -273,6 +275,7 @@ env_internode(){
                         sed -i /nodetype/d ~/.bashrc
                         sed -i /nodeno/d ~/.bashrc
                         sed -i /eurekaip/d ~/.bashrc
+			sed -i /eurekaiprep/d ~/.bashrc
                         sed -i /dcname/d ~/.bashrc
 			
 			echo "umask 077" >> ~/.bashrc
@@ -281,6 +284,7 @@ env_internode(){
                         echo "nodetype=$nodetyper export nodetype">>~/.bashrc
                         echo "nodeno=$nodenor export nodeno">>~/.bashrc 
                         echo "eurekaip=$eurekaipr export eurekaip">>~/.bashrc
+			echo "eurekaiprep=$eurekaipr export eurekaiprep">>~/.bashrc
                         echo "dcname=$dcnamer export dcname">>~/.bashrc 
 			source ~/.bashrc
 			exit
@@ -426,7 +430,7 @@ ssh-mysqlconnect(){
 
 mysql_install(){
 	# echo_yellow "仅限于初始于安装！！"
-	echo_green "安装单机版mysql5.7.19开始"
+	echo_green "安装单机版mysql5.7开始"
 	local ostype=`check_ostype $MYSQL_H`
 	local os=`echo $ostype | awk -F _ '{print $1}'`
         if [ "$os" == "centos" ]; then
@@ -555,6 +559,7 @@ EOF
 	
 	echo_green "安装完成"
 }
+
 #mysql服务器iptables配置
 iptables-mysql(){
   	echo_green "配置iptables开始..."
