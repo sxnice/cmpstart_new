@@ -20,7 +20,7 @@ portimapigateway=28082
 portimprovider=28084
 portim3rdinf=28086
 portimweb=8443
-sleeptime=2
+sleeptime=5
 
 while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
@@ -130,14 +130,7 @@ nohup "$CURRENT_DIR"/background/springbootstartcmdb.sh &>/dev/null &
 sleep $sleeptime
 fi
 
-#启动vsphereagent
-echo "start vsphereagent"
-pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
-echo $pIDvsphereagent
-if [ "$pIDvsphereagent" = "" ] ; then
-nohup "$CURRENT_DIR"/background/springbootstartvsphereagent.sh &>/dev/null &
-sleep $sleeptime
-fi
+
 
 #启动vspheremanage
 echo "start vspheremanage"
@@ -166,6 +159,15 @@ pIDtaskjob=`lsof -i :$porttaskjob|grep  "LISTEN" | awk '{print $2}'`
 echo $pIDtaskjob
 if [ "$pIDtaskjob" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartTaskjob.sh &>/dev/null &
+sleep $sleeptime
+fi
+
+#启动zuulmanager
+echo "start zuulmanager"
+pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
+echo $pIDzuulmanager 
+if [ "$pIDzuulmanager" = "" ] ; then
+nohup "$CURRENT_DIR"/background/springbootstartzuulmanager.sh &>/dev/null &
 sleep $sleeptime
 fi
 
@@ -264,12 +266,15 @@ nohup "$CURRENT_DIR"/background/springbootstartgatherframe.sh &>/dev/null &
 sleep $sleeptime
 fi
 
-#启动zuulmanager
-echo "start zuulmanager"
-pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
-echo $pIDzuulmanager 
-if [ "$pIDzuulmanager" = "" ] ; then
-nohup "$CURRENT_DIR"/background/springbootstartzuulmanager.sh &>/dev/null &
+#启动vsphereagent
+echo "start vsphereagent"
+pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
+echo $pIDvsphereagent
+if [ "$pIDvsphereagent" = "" ] ; then
+nohup "$CURRENT_DIR"/background/springbootstartvsphereagent.sh &>/dev/null &
 sleep $sleeptime
 fi
+
+
 fi
+

@@ -20,7 +20,7 @@ portimapigateway=28082
 portimprovider=28084
 portim3rdinf=28086
 portimweb=8443
-sleeptime=2
+sleeptime=5
 
 while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
@@ -71,7 +71,7 @@ while [ "$pIDconfig" = "" ]
   echo -n "."
 done
 echo "springbootconfig start success!"
-sleep 20
+sleep 30
 fi
 
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "1" ]; then
@@ -148,13 +148,7 @@ if [ "$pIDcmdb" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartcmdb.sh &>/dev/null &
 fi
 
-#启动vsphereagent
-echo "start vsphereagent"
-pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
-echo $pIDvsphereagent
-if [ "$pIDvsphereagent" = "" ] ; then
-nohup "$CURRENT_DIR"/background/springbootstartvsphereagent.sh &>/dev/null &
-fi
+
 
 #启动vspheremanage
 echo "start vspheremanage"
@@ -183,14 +177,7 @@ while [ "$pIDcmdb" = "" ]
 done
 echo "cmdb start success!"
 
-while [ "$pIDvsphereagent" = "" ]
-  do
-  sleep $sleeptime
-  pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDvsphereagent &>/dev/null &
-  echo -n "."
-done
-echo "vphereagent start success!"
+
 
 while [ "$pIDvspheremanage" = "" ]
   do
@@ -220,6 +207,14 @@ if [ "$pIDtaskjob" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartTaskjob.sh &>/dev/null &
 fi
 
+#启动zuulmanager
+echo "start zuulmanager"
+pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
+echo $pIDzuulmanager 
+if [ "$pIDzuulmanager" = "" ] ; then
+nohup "$CURRENT_DIR"/background/springbootstartzuulmanager.sh &>/dev/null &
+fi
+
 #启动检测-----------------------------start-------------------------------------
 while [ "$pIDalarmcenter" = "" ]
   do
@@ -238,6 +233,15 @@ while [ "$pIDtaskjob" = "" ]
   echo -n "."
 done
 echo "taskjob start success!"
+
+while [ "$pIDzuulmanager" = "" ]
+  do
+  sleep $sleeptime
+  pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIDzuulmanager &>/dev/null &
+  echo -n "."
+done
+echo "zuulmanager start success!"
 #启动检测-----------------------------end-------------------------------------
 fi
 
@@ -384,13 +388,15 @@ if [ "$pIDgatherframe" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartgatherframe.sh &>/dev/null &
 fi
 
-#启动zuulmanager
-echo "start zuulmanager"
-pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
-echo $pIDzuulmanager 
-if [ "$pIDzuulmanager" = "" ] ; then
-nohup "$CURRENT_DIR"/background/springbootstartzuulmanager.sh &>/dev/null &
+#启动vsphereagent
+echo "start vsphereagent"
+pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
+echo $pIDvsphereagent
+if [ "$pIDvsphereagent" = "" ] ; then
+nohup "$CURRENT_DIR"/background/springbootstartvsphereagent.sh &>/dev/null &
 fi
+
+
 
 #启动检测-----------------------------start-------------------------------------
 while [ "$pIDgatherframe" = "" ]
@@ -402,14 +408,14 @@ while [ "$pIDgatherframe" = "" ]
 done
 echo "gatherframe start success!"
 
-while [ "$pIDzuulmanager" = "" ]
+while [ "$pIDvsphereagent" = "" ]
   do
   sleep $sleeptime
-  pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDzuulmanager &>/dev/null &
+  pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIDvsphereagent &>/dev/null &
   echo -n "."
 done
-echo "zuulmanager start success!"
+echo "vphereagent start success!"
 
 #启动检测-----------------------------end---------------------------------------
 fi
