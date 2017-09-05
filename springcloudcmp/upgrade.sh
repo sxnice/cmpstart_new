@@ -146,51 +146,55 @@ EOF
 
 #复制文件到各节点
 copy-internode(){
-     echo_green "复制文件到各节点开始..."
-     
-     case $nodeplanr in
-	  [1-4]) #部署
-	    for i in "${SSH_HOST[@]}"
-		do
-		echo "复制文件到"$i 
-		#放根目录下
-		scp -r ./ "$i":$CURRENT_DIR
-		#赋权
-		ssh $i <<EOF
-		rm -rf /tmp/*
-		chown -R $cmpuser.$cmpuser $CURRENT_DIR
-		chmod 740 "$CURRENT_DIR"
- 	        chmod 740 "$CURRENT_DIR"/*.sh
-		chmod 740 "$CURRENT_DIR"/background
-		chmod 640 "$CURRENT_DIR"/background/*.jar
-		chmod 740 "$CURRENT_DIR"/config
-		chmod 740 "$CURRENT_DIR"/im
-		chmod 640 "$CURRENT_DIR"/im/*.jar
-		chmod 740 "$CURRENT_DIR"/background/*.sh
-		chmod 740 "$CURRENT_DIR"/im/*.sh
-		chmod 640 "$CURRENT_DIR"/im/*.war
-		chmod 600 "$CURRENT_DIR"/my.cnf
-                chmod 600 "$CURRENT_DIR"/colorecho
-		chmod 600 "$CURRENT_DIR"/config/*.yml
-		su $cmpuser
-		umask 077
-	#	rm -rf "$CURRENT_DIR"/data
-		mkdir  "$CURRENT_DIR"/data
-	#	rm -rf "$CURRENT_DIR"/activemq-data
-		mkdir  "$CURRENT_DIR"/activemq-data
-		rm -rf "$CURRENT_DIR"/logs
-		mkdir  "$CURRENT_DIR"/logs
-		rm -rf "$CURRENT_DIR"/temp
-                mkdir  "$CURRENT_DIR"/temp
-		exit
+	echo_green "复制文件到各节点开始..."
+	case $nodeplanr in
+          [1-4]) #部署
+            #从文件里读取ip节点组，一行为一个组
+            for line in $(cat haiplist)
+            do
+                SSH_HOST=($line)
+                for i in "${SSH_HOST[@]}"
+                do
+                        echo "复制文件到"$i 
+                        #放根目录下
+                        ssh $i mkdir -p $CURRENT_DIR
+                        scp -r ./background ./im ./config startIM.sh startIM_BX.sh stopIM.sh im.config  "$i":$CURRENT_DIR
+                        #赋权
+                        ssh $i <<EOF
+                        rm -rf /tmp/spring.log
+                        rm -rf /tmp/modelTypeName.data
+                        chown -R $cmpuser.$cmpuser $CURRENT_DIR
+                        chmod 740 "$CURRENT_DIR"
+                        chmod 740 "$CURRENT_DIR"/*.sh
+                        chmod 740 "$CURRENT_DIR"/background
+                        chmod 640 "$CURRENT_DIR"/background/*.jar
+                        chmod 740 "$CURRENT_DIR"/config
+                        chmod 740 "$CURRENT_DIR"/im
+                        chmod 640 "$CURRENT_DIR"/im/*.jar
+                        chmod 740 "$CURRENT_DIR"/background/*.sh
+                        chmod 740 "$CURRENT_DIR"/im/*.sh
+                        chmod 640 "$CURRENT_DIR"/im/*.war
+                        chmod 600 "$CURRENT_DIR"/config/*.yml
+                        su $cmpuser
+                        umask 077
+        #               rm -rf "$CURRENT_DIR"/data
+                        mkdir  "$CURRENT_DIR"/data
+        #               rm -rf "$CURRENT_DIR"/activemq-data
+                        mkdir  "$CURRENT_DIR"/activemq-data
+                        rm -rf "$CURRENT_DIR"/logs
+                        mkdir  "$CURRENT_DIR"/logs
+                        rm -rf "$CURRENT_DIR"/temp
+                        mkdir  "$CURRENT_DIR"/temp
+                        exit
 EOF
-        echo_green "complete"
-		done
-	    ;;
-	  0) 
-	    echo "nothing to do...."
-	    ;;
-	 esac
+                echo "complete..."
+                done
+           done
+            ;;
+          0)
+            echo "nothing to do...."
+            ;;
+         esac
 	echo_green "复制文件到各节点完成..."
 }
 
