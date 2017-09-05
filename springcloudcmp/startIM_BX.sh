@@ -20,7 +20,7 @@ portimapigateway=28082
 portimprovider=28084
 portim3rdinf=28086
 portimweb=8443
-sleeptime=5
+sleeptime=2
 
 while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
@@ -129,8 +129,6 @@ if [ "$pIDcmdb" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartcmdb.sh &>/dev/null &
 sleep $sleeptime
 fi
-
-
 
 #启动vspheremanage
 echo "start vspheremanage"

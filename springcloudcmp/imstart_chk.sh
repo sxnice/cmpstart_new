@@ -39,17 +39,6 @@ CURRENT_DIR=`cd "$PRGDIR" >/dev/null; pwd`
 if [ "$nodeplan" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "1" -a "$nodeplan" = "4" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "2" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "3" -a "$nodeno" = "1" ] || [ "$nodetype" = "3" -a "$nodeplan" = "4" -a "$nodeno" = "1" ]; then
 #启动检测-----------------------------start-------------------------------------
 
-echo "check taskengine"
-pIDtaskengine=`lsof -i :$porttaskengine|grep  "LISTEN" | awk '{print $2}'`
-while [ "$pIDtaskengine" = "" ]
-  do
-  sleep $sleeptime
-  pIDtaskengine=`lsof -i :$porttaskengine|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDtaskengine &>/dev/null &
-  echo -n "."
-done
-echo "taskengine start success!"
-
 echo "check activemqserver"
 pIDactivemq=`lsof -i :$portactivemq|grep  "LISTEN" | awk '{print $2}'`
 while [ "$pIDactivemq" = "" ]
@@ -98,17 +87,6 @@ while [ "$pIDcmdb" = "" ]
 done
 echo "cmdb start success!"
 
-echo "check vsphereagent"
-pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
-while [ "$pIDvsphereagent" = "" ]
-  do
-  sleep $sleeptime
-  pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDvsphereagent &>/dev/null &
-  echo -n "."
-done
-echo "vphereagent start success!"
-
 echo "check vspheremanage"
 pIDvspheremanage=`lsof -i :$portvspheremanage|grep  "LISTEN" | awk '{print $2}'`
 while [ "$pIDvspheremanage" = "" ]
@@ -145,6 +123,17 @@ while [ "$pIDtaskjob" = "" ]
   echo -n "."
 done
 echo "taskjob start success!"
+
+echo "check zuulmanager"
+pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
+while [ "$pIDzuulmanager" = "" ]
+  do
+  sleep $sleeptime
+  pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIDzuulmanager &>/dev/null &
+  echo -n "."
+done
+echo "zuulmanager start success!"
 #启动检测-----------------------------end-------------------------------------
 fi
 
@@ -235,16 +224,17 @@ while [ "$pIDgatherframe" = "" ]
 done
 echo "gatherframe start success!"
 
-echo "check zuulmanager"
-pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
-while [ "$pIDzuulmanager" = "" ]
+echo "check vsphereagent"
+pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
+while [ "$pIDvsphereagent" = "" ]
   do
   sleep $sleeptime
-  pIDzuulmanager=`lsof -i :$portzuulmanager|grep  "LISTEN" | awk '{print $2}'`
-  echo $pIDzuulmanager &>/dev/null &
+  pIDvsphereagent=`lsof -i :$portvsphereagent|grep  "LISTEN" | awk '{print $2}'`
+  echo $pIDvsphereagent &>/dev/null &
   echo -n "."
 done
-echo "zuulmanager start success!"
+echo "vphereagent start success!"
+
 
 #启动检测-----------------------------end---------------------------------------
 fi
