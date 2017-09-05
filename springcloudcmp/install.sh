@@ -169,9 +169,6 @@ copy-internode(){
 	case $nodeplanr in
           [1-4]) #部署
             #从文件里读取ip节点组，一行为一个组
-            for line in $(cat haiplist)
-            do
-                SSH_HOST=($line)
                 for i in "${SSH_HOST[@]}"
                 do
                         echo "复制文件到"$i 
@@ -207,13 +204,13 @@ copy-internode(){
                         exit
 EOF
                 echo "complete..."
-                done
-           done
+            done
             ;;
           0)
             echo "nothing to do...."
             ;;
          esac
+}
 
 #配置各节点环境变量
 env_internode(){
