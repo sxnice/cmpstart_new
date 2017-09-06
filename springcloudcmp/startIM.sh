@@ -20,7 +20,7 @@ portimapigateway=28082
 portimprovider=28084
 portim3rdinf=28086
 portimweb=8443
-sleeptime=2
+sleeptime=5
 
 while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
@@ -119,8 +119,6 @@ nohup "$CURRENT_DIR"/background/springbootstartactivemqserver.sh &>/dev/null &
 fi
 
 
-
-
 #启动检测-----------------------------start-------------------------------------
 
 while [ "$pIDactivemq" = "" ]
@@ -161,8 +159,6 @@ if [ "$pIDcmdb" = "" ] ; then
 nohup "$CURRENT_DIR"/background/springbootstartcmdb.sh &>/dev/null &
 fi
 
-
-
 #启动vspheremanage
 echo "start vspheremanage"
 pIDvspheremanage=`lsof -i :$portvspheremanage|grep  "LISTEN" | awk '{print $2}'`
@@ -172,6 +168,7 @@ nohup "$CURRENT_DIR"/background/springbootstartvspheremanage.sh &>/dev/null &
 fi
 
 #启动检测-----------------------------start-------------------------------------
+
 while [ "$pIDmessage" = "" ]
   do
   sleep $sleeptime
@@ -207,6 +204,7 @@ while [ "$pIDvspheremanage" = "" ]
   echo -n "."
 done
 echo "vspheremanage start success!"
+
 #启动检测-----------------------------end-------------------------------------
 fi
 
