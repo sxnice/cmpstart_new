@@ -96,14 +96,14 @@ install-interpackage(){
 		    echo JAVA_HOME="$JDK_DIR" >> /etc/profile
 		    echo PATH='\$JAVA_HOME'/bin:'\$PATH' >> /etc/profile
 		    echo CLASSPATH='\$JAVA_HOME'/jre/lib/ext:'\$JAVA_HOME'/lib/tools.jar >> /etc/profile
-  	            echo export PATH JAVA_HOME CLASSPATH >> /etc/profile
+  	            echo export JAVA_HOME CLASSPATH PATH>> /etc/profile
 	            source /etc/profile
 		    su - $cmpuser
                     sed -i /JAVA_HOME/d ~/.bashrc
                     echo JAVA_HOME="$JDK_DIR" >> ~/.bashrc
                     echo PATH='\$JAVA_HOME'/bin:'\$PATH' >> ~/.bashrc
                     echo CLASSPATH='\$JAVA_HOME'/jre/lib/ext:'\$JAVA_HOME'/lib/tools.jar >> ~/.bashrc
-                    echo export PATH JAVA_HOME CLASSPATH >> ~/.bashrc
+                    echo export JAVA_HOME CLASSPATH PATH>> ~/.bashrc
 		    exit
 		
 EOF
