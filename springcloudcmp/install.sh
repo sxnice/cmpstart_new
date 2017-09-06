@@ -168,7 +168,6 @@ copy-internode(){
 	echo_green "复制文件到各节点开始..."
 	case $nodeplanr in
           [1-4]) #部署
-            #从文件里读取ip节点组，一行为一个组
                 for i in "${SSH_HOST[@]}"
                 do
                         echo "复制文件到"$i 
@@ -463,10 +462,10 @@ mysql_install(){
                 	if [ "$ostype" == "centos_6" ]; then
                			scp ../packages/centos6_numactl/* "$MYSQL_H":/root/
              		       	ssh -n $MYSQL_H rpm -Uvh ~/numactl-2.0.9-2.el6.x86_64.rpm
-               		 elif [ "$ostype" == "centos_7" ]; then
-				 scp ../packages/centos7_numactl/* "$MYSQL_H":/root/
-               			 ssh -n $MYSQL_H rpm -Uvh ~/numactl-2.0.9-6.el7_2.x86_64.rpm ~/numactl-libs-2.0.9-6.el7_2.x86_64.rpm
-               		 fi
+               		elif [ "$ostype" == "centos_7" ]; then
+				scp ../packages/centos7_numactl/* "$MYSQL_H":/root/
+               			ssh -n $MYSQL_H rpm -Uvh ~/numactl-2.0.9-6.el7_2.x86_64.rpm ~/numactl-libs-2.0.9-6.el7_2.x86_64.rpm
+               		fi
         	fi
 		local openssl=`ssh -n "$MYSQL_H" rpm -qa |grep openssl |wc -l`
 		if [ "$openssl" -gt 0 ]; then
