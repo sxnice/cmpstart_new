@@ -53,10 +53,10 @@ install-interpackage(){
         		else
                 		if [ "${ostype}" == "centos_6" ]; then
                         		 scp  ../packages/centos6_iptables/* "$i":/root/
-                         		 ssh $i rpm -Uvh ~/iptables-1.4.7-16.el6.x86_64.rpm
+                         		 ssh -n $i rpm -Uvh ~/iptables-1.4.7-16.el6.x86_64.rpm
                			 elif [ "${ostype}" == "centos_7" ]; then
                         		 scp ../packages/centos7_iptables/* "$i":/root/
-                        		 ssh $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm ~/iptables-services-1.4.21-17.el7.x86_64.rpm
+                        		 ssh -n $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm ~/iptables-services-1.4.21-17.el7.x86_64.rpm
                			 fi
         		fi
 	        	local lsof=`ssh -n "$i" rpm -qa |grep lsof |wc -l`
@@ -65,10 +65,10 @@ install-interpackage(){
                		 else
                 		if [ "${ostype}" == "centos_6" ]; then
                         		 scp  ../packages/centos6_lsof/* "$i":/root/
-                         		 ssh $i rpm -Uvh ~/lsof-4.82-5.el6.x86_64.rpm
+                         		 ssh -n $i rpm -Uvh ~/lsof-4.82-5.el6.x86_64.rpm
                			 elif [ "${ostype}" == "centos_7" ]; then
                         		 scp ../packages/centos7_lsof/* "$i":/root/
-                         		 ssh $i rpm -Uvh ~/lsof-4.87-4.el7.x86_64.rpm
+                         		 ssh -n $i rpm -Uvh ~/lsof-4.87-4.el7.x86_64.rpm
                			 fi
                		 fi
 		elif [ "$os" == "ubuntu" ]; then
@@ -77,7 +77,7 @@ install-interpackage(){
 				exit
 			elif [ "$ostype" == "ubuntu_14" ]; then
 				scp  ../packages/ubuntu14/* "$i":/root/
-                                ssh $i dpkg -i ~/lsof_4.86+dfsg-1ubuntu2_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb
+                                ssh -n $i dpkg -i ~/lsof_4.86+dfsg-1ubuntu2_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb
 			elif [ "$ostype" == "ubuntu_16" ]; then
 				echo_red "$ostype"暂不提供安装                                
                                 exit
@@ -90,7 +90,7 @@ install-interpackage(){
 		ssh -n "$i" mkdir -p "$JDK_DIR"	
 		scp -r ../packages/jdk/* "$i":"$JDK_DIR"
 		scp ../packages/jce/* "$i":"$JDK_DIR"/jre/lib/security/
-		ssh -n $i  <<EOF
+		ssh $i  <<EOF
 		    chmod 755 "$JDK_DIR"/bin/*
 		    sed -i /JAVA_HOME/d /etc/profile
 		    echo JAVA_HOME="$JDK_DIR" >> /etc/profile
@@ -108,7 +108,7 @@ install-interpackage(){
 		
 EOF
                 echo "系统配置节点"$i
-                ssh -n "$i" <<EOF
+                ssh "$i" <<EOF
                     sed -i /$cmpuser/d /etc/security/limits.conf
                     echo $cmpuser soft nproc unlimited >>/etc/security/limits.conf
                     echo $cmpuser hard nproc unlimited >>/etc/security/limits.conf
@@ -136,7 +136,7 @@ user-internode(){
         $ssh_pass_path $SSH_H
 	for i in "${SSH_HOST[@]}"
         do
-        	ssh -n $i <<EOF
+        	ssh $i <<EOF
         	echo "$cmpuser:$cmppass" | chpasswd
 EOF
         done
@@ -160,7 +160,7 @@ copy-internode(){
                         ssh -n $i mkdir -p $CURRENT_DIR
                         scp -r ./background ./im ./config startIM.sh startIM_BX.sh stopIM.sh im.config imstart_chk.sh  "$i":$CURRENT_DIR
                         #赋权
-                        ssh -n $i <<EOF
+                        ssh $i <<EOF
                         rm -rf /tmp/spring.log
                         rm -rf /tmp/modelTypeName.data
                         chown -R $cmpuser.$cmpuser $CURRENT_DIR
@@ -205,7 +205,7 @@ env_internode(){
 		for j in "${SSH_HOST[@]}"
 			do
 			echo "配置节点"$j
-			ssh -n $j <<EOF			
+			ssh $j <<EOF			
 			source /etc/environment
 			su - $cmpuser
 			
@@ -256,7 +256,7 @@ start_internode(){
 		for i in "${SSH_HOST[@]}"
 		do
 			echo "启动节点"$i
-			ssh -n $i <<EOF
+			ssh $i <<EOF
 			su - $cmpuser
 			source /etc/environment
 			umask 077
@@ -276,7 +276,7 @@ EOF
 			continue
 		fi
 		echo "启动节点"$i
-		 ssh -n $i <<EOF
+		 ssh $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
 		 umask 077
@@ -297,7 +297,7 @@ EOF
 			continue
 		fi
 		echo "启动节点"$i
-		 ssh -n $i <<EOF
+		 ssh $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
 		 umask 077

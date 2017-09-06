@@ -60,10 +60,10 @@ install-interpackage(){
         		else
                 		if [ "${ostype}" == "centos_6" ]; then
                         		 scp  ../packages/centos6_iptables/* "$i":/root/
-                         		 ssh $i rpm -Uvh ~/iptables-1.4.7-16.el6.x86_64.rpm
+                         		 ssh -n $i rpm -Uvh ~/iptables-1.4.7-16.el6.x86_64.rpm
                			 elif [ "${ostype}" == "centos_7" ]; then
                         		 scp ../packages/centos7_iptables/* "$i":/root/
-                        		 ssh $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm ~/iptables-services-1.4.21-17.el7.x86_64.rpm
+                        		 ssh -n $i rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm ~/iptables-services-1.4.21-17.el7.x86_64.rpm
                			 fi
         		fi
 	        	local lsof=`ssh -n "$i" rpm -qa |grep lsof |wc -l`
@@ -72,10 +72,10 @@ install-interpackage(){
                		 else
                 		if [ "${ostype}" == "centos_6" ]; then
                         		 scp  ../packages/centos6_lsof/* "$i":/root/
-                         		 ssh $i rpm -Uvh ~/lsof-4.82-5.el6.x86_64.rpm
+                         		 ssh -n $i rpm -Uvh ~/lsof-4.82-5.el6.x86_64.rpm
                			 elif [ "${ostype}" == "centos_7" ]; then
                         		 scp ../packages/centos7_lsof/* "$i":/root/
-                         		 ssh $i rpm -Uvh ~/lsof-4.87-4.el7.x86_64.rpm
+                         		 ssh -n $i rpm -Uvh ~/lsof-4.87-4.el7.x86_64.rpm
                			 fi
                		 fi
 			 local psmisc=`ssh -n "$i" rpm -qa |grep psmisc |wc -l`
@@ -84,10 +84,10 @@ install-interpackage(){
                          else
                                 if [ "${ostype}" == "centos_6" ]; then
                                          scp  ../packages/centos6_psmisc/* "$i":/root/
-                                         ssh $i rpm -Uvh ~/psmisc-22.6-24.el6.x86_64.rpm
+                                         ssh -n $i rpm -Uvh ~/psmisc-22.6-24.el6.x86_64.rpm
                                  elif [ "${ostype}" == "centos_7" ]; then
                                          scp ../packages/centos7_psmisc/* "$i":/root/
-                                         ssh $i rpm -Uvh ~/psmisc-22.20-11.el7.x86_64.rpm
+                                         ssh -n $i rpm -Uvh ~/psmisc-22.20-11.el7.x86_64.rpm
                                  fi
                          fi
 		elif [ "$os" == "ubuntu" ]; then
@@ -96,7 +96,7 @@ install-interpackage(){
 				exit
 			elif [ "$ostype" == "ubuntu_14" ]; then
 				scp  ../packages/ubuntu14/* "$i":/root/
-                                ssh $i dpkg -i ~/lsof_4.86+dfsg-1ubuntu2_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb ~/psmisc_22.20-1ubuntu2_amd64.deb
+                                ssh -n $i dpkg -i ~/lsof_4.86+dfsg-1ubuntu2_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb ~/psmisc_22.20-1ubuntu2_amd64.deb
 			elif [ "$ostype" == "ubuntu_16" ]; then
 				echo_red "$ostype"暂不提供安装                                
                                 exit
@@ -106,10 +106,10 @@ install-interpackage(){
 			fi
 		fi
                 echo "安装jdk1.8到节点"$i
-		ssh "$i" mkdir -p "$JDK_DIR"
+		ssh -n "$i" mkdir -p "$JDK_DIR"
 		scp -r ../packages/jdk/* "$i":"$JDK_DIR"
 		scp ../packages/jce/* "$i":"$JDK_DIR"/jre/lib/security/
-		ssh -n $i  <<EOF
+		ssh $i  <<EOF
 		    chmod 755 "$JDK_DIR"/bin/*
 		    sed -i /JAVA_HOME/d /etc/profile
 		    echo JAVA_HOME="$JDK_DIR" >> /etc/profile
@@ -127,7 +127,7 @@ install-interpackage(){
 		
 EOF
 		echo "系统配置节点"$i
-		ssh -n "$i" <<EOF
+		ssh "$i" <<EOF
 		    sed -i /$cmpuser/d /etc/security/limits.conf
 		    echo $cmpuser soft nproc unlimited >>/etc/security/limits.conf
 		    echo $cmpuser hard nproc unlimited >>/etc/security/limits.conf
@@ -176,7 +176,7 @@ copy-internode(){
                         ssh -n $i mkdir -p $CURRENT_DIR
                         scp -r ./background ./im ./config startIM.sh startIM_BX.sh stopIM.sh imstart_chk.sh "$i":$CURRENT_DIR
                         #赋权
-                        ssh -n $i <<EOF
+                        ssh $i <<EOF
                         rm -rf /tmp/spring.log
                         rm -rf /tmp/modelTypeName.data
                         chown -R $cmpuser.$cmpuser $CURRENT_DIR
@@ -252,7 +252,7 @@ env_internode(){
 
 			echo "节点："$j
 			
-			ssh -n $j <<EOF
+			ssh $j <<EOF
                         sed -i /nodeplan/d /etc/environment
 			sed -i /nodetype/d /etc/environment
 			sed -i /nodeno/d /etc/environment
@@ -310,7 +310,7 @@ start_internode(){
 		for i in "${SSH_HOST[@]}"
 		do
 			echo "启动节点"$i
-			ssh -n $i <<EOF
+			ssh $i <<EOF
 			su - $cmpuser
 			source /etc/environment
 			umask 077
@@ -330,7 +330,7 @@ EOF
 			continue
 		fi
 		echo "启动节点"$i
-		 ssh -nf $i <<EOF
+		 ssh $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
 		 umask 077
@@ -351,7 +351,7 @@ EOF
 			continue
 		fi
 		echo "检测节点"$i
-		 ssh -n $i <<EOF
+		 ssh $i <<EOF
 		 su - $cmpuser
 		 source /etc/environment
 		 umask 077
@@ -398,7 +398,7 @@ uninstall_internode(){
 		for i in "${SSH_HOST[@]}"
 		do
 		echo "删除节点"$i
-		ssh -n $i <<EOF
+		ssh $i <<EOF
 		rm -rf "$CURRENT_DIR"
 		rm -rf /home/cmpimuser/
 		rm -rf /usr/java/
@@ -450,10 +450,10 @@ mysql_install(){
 		else
 			if [ "$ostype" == "centos_6" ]; then
 				 scp  ../packages/centos6_libaio/* "$MYSQL_H":/root/
-               			 ssh $MYSQL_H rpm -Uvh ~/libaio-0.3.107-10.el6.x86_64.rpm
+               			 ssh -n $MYSQL_H rpm -Uvh ~/libaio-0.3.107-10.el6.x86_64.rpm
 			elif [ "$ostype" == "centos_7" ]; then
 		        	 scp ../packages/centos7_libaio/* "$MYSQL_H":/root/
-                	 	 ssh $MYSQL_H rpm -Uvh ~/libaio-0.3.109-13.el7.x86_64.rpm
+                	 	 ssh -n $MYSQL_H rpm -Uvh ~/libaio-0.3.109-13.el7.x86_64.rpm
 			fi
 		fi
 		local numactl=`ssh -n "$MYSQL_H" rpm -qa |grep numactl |wc -l`
@@ -462,10 +462,10 @@ mysql_install(){
         	else
                 	if [ "$ostype" == "centos_6" ]; then
                			scp ../packages/centos6_numactl/* "$MYSQL_H":/root/
-             		       	ssh $MYSQL_H rpm -Uvh ~/numactl-2.0.9-2.el6.x86_64.rpm
+             		       	ssh -n $MYSQL_H rpm -Uvh ~/numactl-2.0.9-2.el6.x86_64.rpm
                		 elif [ "$ostype" == "centos_7" ]; then
 				 scp ../packages/centos7_numactl/* "$MYSQL_H":/root/
-               			 ssh $MYSQL_H rpm -Uvh ~/numactl-2.0.9-6.el7_2.x86_64.rpm ~/numactl-libs-2.0.9-6.el7_2.x86_64.rpm
+               			 ssh -n $MYSQL_H rpm -Uvh ~/numactl-2.0.9-6.el7_2.x86_64.rpm ~/numactl-libs-2.0.9-6.el7_2.x86_64.rpm
                		 fi
         	fi
 		local openssl=`ssh -n "$MYSQL_H" rpm -qa |grep openssl |wc -l`
@@ -474,10 +474,10 @@ mysql_install(){
         	else
 			if [ "$ostype" == "centos_6" ]; then
          	        	scp ../packages/centos6_openssl/* "$MYSQL_H":/root/
-                		ssh $MYSQL_H rpm -Uvh ~/openssl-1.0.1e-57.el6.x86_64.rpm            
+                		ssh -n $MYSQL_H rpm -Uvh ~/openssl-1.0.1e-57.el6.x86_64.rpm            
 			elif [ "$ostype" == "centos_7" ]; then
     		        	scp ../packages/centos7_openssl/* "$MYSQL_H":/root/
-                		ssh $MYSQL_H rpm -Uvh ~/make-3.82-23.el7.x86_64.rpm  ~/openssl-1.0.1e-60.el7_3.1.x86_64.rpm  ~/openssl-libs-1.0.1e-60.el7_3.1.x86_64.rpm
+                		ssh -n $MYSQL_H rpm -Uvh ~/make-3.82-23.el7.x86_64.rpm  ~/openssl-1.0.1e-60.el7_3.1.x86_64.rpm  ~/openssl-libs-1.0.1e-60.el7_3.1.x86_64.rpm
                 	fi
         	fi
         	local iptables=`ssh -n "$MYSQL_H" rpm -qa |grep iptables |wc -l`
@@ -486,10 +486,10 @@ mysql_install(){
         	else
                 	if [ "$ostype" == "centos_6" ]; then
                         	 scp  ../packages/centos6_iptables/* "$MYSQL_H":/root/
-                        	 ssh $MYSQL_H rpm -Uvh ~/iptables-1.4.7-16.el6.x86_64.rpm
+                        	 ssh -n $MYSQL_H rpm -Uvh ~/iptables-1.4.7-16.el6.x86_64.rpm
                 	elif [ "$ostype" == "centos_7" ]; then
                         	 scp ../packages/centos7_iptables/* "$MYSQL_H":/root/
-     				 ssh $MYSQL_H rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm
+     				 ssh -n $MYSQL_H rpm -Uvh ~/iptables-1.4.21-17.el7.x86_64.rpm ~/libnetfilter_conntrack-1.0.6-1.el7_3.x86_64.rpm ~/libmnl-1.0.3-7.el7.x86_64.rpm ~/libnfnetlink-1.0.1-4.el7.x86_64.rpm
                 	fi
         	fi
 	elif [ "$os" == "ubuntu" ]; then
@@ -509,7 +509,7 @@ mysql_install(){
                                 exit
                         elif [ "$ostype" == "ubuntu_14" ]; then
                                 scp  ../packages/ubuntu14/* "$MYSQL_H":/root/
-           			ssh $MYSQL_H dpkg -i ~/libaio1_0.3.109-4_amd64.deb  ~/libnuma1_2.0.9~rc5-1ubuntu3.14.04.2_amd64.deb  ~/openssl_1.0.1f-1ubuntu2.22_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb
+           			ssh -n $MYSQL_H dpkg -i ~/libaio1_0.3.109-4_amd64.deb  ~/libnuma1_2.0.9~rc5-1ubuntu3.14.04.2_amd64.deb  ~/openssl_1.0.1f-1ubuntu2.22_amd64.deb ~/iptables_1.4.21-1ubuntu1_amd64.deb ~/libnfnetlink0_1.0.1-2_amd64.deb ~/libxtables10_1.4.21-1ubuntu1_amd64.deb
                         elif [ "$ostype" == "ubuntu_16" ]; then
                                 echo_red "$ostype"暂不提供安装
                                 exit
@@ -521,7 +521,7 @@ mysql_install(){
 		echo_green "复制文件"
 		ssh -n "$MYSQL_H" mkdir -p "$MYSQL_DIR"
 		scp -r ../packages/mysql/* "$MYSQL_H":"$MYSQL_DIR"
-		ssh -n $MYSQL_H <<EOF
+		ssh $MYSQL_H <<EOF
 		echo "创建mysql用户"
 		groupadd mysql
 		useradd -r -g mysql -s /bin/false mysql
