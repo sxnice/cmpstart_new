@@ -23,25 +23,6 @@ ssh-interconnect(){
         echo_green "建立对等互信完成..."
 }
 
-#启动cmp
-start_internode(){
-                echo_green "启动CMP开始..."
-                for i in "${SSH_HOST[@]}"
-                do
-                echo "启动节点"$i
-                 ssh $i <<EOF
-                 su - $cmpuser
-                 umask 077
-		 source /etc/environment
-                 cd "$CURRENT_DIR"
-                 ./startIM.sh
-                 exit
-EOF
-                echo "complete"
-                done
-                echo_green "启动CMP完成..."
-}
-
 
 #关闭cmp
 stop_internode(){
@@ -64,7 +45,7 @@ EOF
                         fi
                 else
                         echo_red "尚未创建$cmpuser用户,请手动关闭服务"
-                        exit
+                 #       exit
                 fi
                 done
                 echo_green "所有节点CMP关闭完成..."

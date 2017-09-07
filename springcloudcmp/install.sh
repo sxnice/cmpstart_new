@@ -337,7 +337,7 @@ EOF
 	#	 ./startIM_BX.sh
 	#	 exit
 #EOF
-		ssh -nf $i `su - $cmpuser -c '"$CURRENT_DIR"/startIM_BX.sh'`
+		ssh -nf $i 'su - '$cmpuser' -c '$CURRENT_DIR'/startIM_BX.sh > /dev/null'
 		let k=k+1
 		echo "发启启动指令成功"
 		done
