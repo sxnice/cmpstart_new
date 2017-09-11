@@ -303,9 +303,9 @@ iptable_internode(){
 		echo_green "配置各节点iptables结束..."
 }
 
-#启动cmp
+#启动im
 start_internode(){
-		echo_green "启动CMP开始..."
+		echo_green "启动IM开始..."
 		#启动主控节点1或集中式启动串行启动！
 		local k=0
 		for i in "${SSH_HOST[@]}"
@@ -364,18 +364,18 @@ EOF
 		let k=k+1
 		echo "节点检测成功"
 		done
-		echo_green "启动CMP完成..."
+		echo_green "启动IM完成..."
 }
 
-#关闭cmp
+#关闭im
 stop_internode(){
-		echo_green "关闭CMP开始..."
+		echo_green "关闭IM开始..."
 		
 		for i in "${SSH_HOST[@]}"
 		do
 		echo "关闭节点"$i
-		local user=`ssh -n $i cat /etc/passwd | sed -n /$cmpuser/p |wc -l`
-		if [ "$user" -eq 1 ]; then
+		local user=`ssh -n $i cat /etc/passwd | awk -F : '{print \$1}' | grep -w $cmpuser |wc -l`
+                if [ "$user" -eq 1 ]; then
 			local jars=`ssh -n $i ps -u $cmpuser | grep -v PID | wc -l`
 			if [ "$jars" -gt 0 ]; then
 				ssh $i <<EOF
@@ -384,14 +384,14 @@ stop_internode(){
 EOF
 				echo "complete"
 			else
-				echo "CMP已关闭"
+				echo "IM已关闭"
 			fi
 		else
 			echo_red "尚未创建$cmpuser用户,请手动关闭服务"
 			exit
 		fi
 		done
-		echo_green "所有节点CMP关闭完成..."
+		echo_green "所有节点IM关闭完成..."
 }
 
 #清空安装

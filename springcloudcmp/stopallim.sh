@@ -24,14 +24,14 @@ ssh-interconnect(){
 }
 
 
-#关闭cmp
+#关闭im
 stop_internode(){
-                echo_green "关闭CMP开始..."
+                echo_green "关闭IM开始..."
 
                 for i in "${SSH_HOST[@]}"
                 do
                 echo "关闭节点"$i
-                local user=`ssh $i cat /etc/passwd | sed -n /$cmpuser/p |wc -l`
+		local user=`ssh -n $i cat /etc/passwd | awk -F : '{print \$1}' | grep -w $cmpuser |wc -l`
                 if [ "$user" -eq 1 ]; then
                         local jars=`ssh $i ps -u $cmpuser | grep -v PID | wc -l`
                         if [ "$jars" -gt 0 ]; then
@@ -41,14 +41,14 @@ stop_internode(){
 EOF
                                 echo "complete"
                         else
-                                echo "CMP已关闭"
+                                echo "IM已关闭"
                         fi
                 else
                         echo_red "尚未创建$cmpuser用户,请手动关闭服务"
                  #       exit
                 fi
                 done
-                echo_green "所有节点CMP关闭完成..."
+                echo_green "所有节点IM关闭完成..."
 }
 
 
