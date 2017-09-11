@@ -150,16 +150,18 @@ ssh-interconnect(){
 
 #创建普通用户cmpimuser
 user-internode(){
-	echo_green "建立普通用户cmpimuser开始..."
-	local ssh_pass_path=./ssh-pass.sh
-        $ssh_pass_path $SSH_H
+	echo_green "建立普通用户开始..."
 	for i in "${SSH_HOST[@]}"
 	do
+	echo =======$i=======
 	ssh $i <<EOF
+	groupadd $cmpuser
+ 	useradd -m -s  /bin/bash -g $cmpuser $cmpuser
+ 	usermod -G $cmpuser $cmpuser
 	echo "$cmpuser:$cmppass" | chpasswd
 EOF
 	done
-	echo_green "建立普通用户cmpimuser完成..."
+	echo_green "建立普通用户完成..."
         
 }
 
