@@ -8,7 +8,7 @@ nodetyper=1
 nodeplanr=1
 nodenor=1
 eurekaipr=localhost
-dcnamer=DC1
+dcnamer="DC1"
 JDK_DIR="/usr/java"
 
 
@@ -18,9 +18,12 @@ CURRENT_DIR="/springcloudcmp"
 #用户名，密码
 cmpuser="cmpimuser"
 cmppass="Pbu4@123"
-#节点IP组，用空格格开
+#IM节点IP组，用空格格开
 SSH_H="10.143.132.187"
+#扩容采集节点组，用空格格开
+GF_H="10.143.132.189 10.143.132.190"
 #-----------------------------------------------
+declare -a IM_HOST=($SSH_H $FG_H)
 declare -a SSH_HOST=($SSH_H)
 
 #检测操作系统
@@ -41,7 +44,7 @@ check_ostype(){
 #检测安装软件
 install-interpackage(){
 	echo_green "环境检测开始..."
-	for i in "${SSH_HOST[@]}"
+	for i in "${IM_HOST[@]}"
             do
 		echo "安装依赖包到"$i
 		local ostype=`check_ostype $i`
@@ -126,15 +129,14 @@ ssh-interconnect(){
     echo_green "建立对等互信开始..."
 	local ssh_init_path=./ssh-init.sh
         $ssh_init_path $SSH_H
+	$ssh_init_path $GF_H
 	echo_green "建立对等互信完成..."
 }
 
 #创建普通用户cmpimuser
 user-internode(){
 	echo_green "建立普通用户开始..."
-	local ssh_pass_path=./ssh-pass.sh
-        $ssh_pass_path $SSH_H
-	for i in "${SSH_HOST[@]}"
+	for i in "${IM_HOST[@]}"
 	do
 	echo =======$i=======
 	ssh $i <<EOF
@@ -153,7 +155,7 @@ copy-internode(){
 	echo_green "复制文件到各节点开始..."
 	case $nodeplanr in
           [1-4]) #部署
-                for i in "${SSH_HOST[@]}"
+                for i in "${IM_HOST[@]}"
                 do
                         echo "复制文件到"$i 
                         #放根目录下
@@ -197,10 +199,10 @@ EOF
 	echo_green "复制文件到各节点完成..."
 }
 
-#配置各节点环境变量
+#配置IM节点环境变量
 env_internode(){
         
-		echo_green "配置各节点环境变量开始..."
+		echo_green "配置IM节点环境变量开始..."
 		for j in "${SSH_HOST[@]}"
 			do
 			echo "配置节点"$j
@@ -239,12 +241,86 @@ EOF
 	
 }
 
+#配置扩容采集节点环境变量
+env_gfnode(){
+                echo_green "配置扩容采集节点环境变量开始..."
+                for j in "${IM_HOST[@]}"
+		do
+		echo "配置节点"$j
+			
+			if [ $nodeplanr -ne 1 ]; then
+			echo "节点类型，请输入编号："  
+			echo "2-----采集节点."    
+			echo "3-----控制以及采集节点."    
+			read nodetyper 
+			
+			echo "主控制节点IP："  
+			read eurekaipr 
+			fi
+
+			if [ $nodetyper -eq 2 ] || [ $nodetyper -eq 3 ]; then
+			read -t 5 -p "请输入采集节点名称，如DC1:" dcnamer
+                        dcnamer=${dcnamer:-"DC1"}
+			fi
+			
+			nodenor=0
+			
+			
+			echo "设置nodeplan="$nodeplanr
+			echo "设置nodetype="$nodetyper
+			echo "设置nodeno="$nodenor	
+			echo "设置eurekaip="$eurekaipr
+			echo "设置dcname="$dcnamer
+
+			echo "节点："$j
+			
+			ssh $j <<EOF
+                        sed -i /nodeplan/d /etc/environment
+			sed -i /nodetype/d /etc/environment
+			sed -i /nodeno/d /etc/environment
+			sed -i /eurekaip/d /etc/environment
+			sed -i /eurekaiprep/d /etc/environment
+			sed -i /dcname/d /etc/environment
+			
+			echo "nodeplan=$nodeplanr export nodeplan">>/etc/environment
+			echo "nodetype=$nodetyper export nodetype">>/etc/environment
+			echo "nodeno=$nodenor export nodeno">>/etc/environment 
+			echo "eurekaip=$eurekaipr export eurekaip">>/etc/environment
+			echo "eurekaiprep=$eurekaipr export eurekaiprep">>/etc/environment
+			echo "dcname=$dcnamer export dcname">>/etc/environment 			
+			source /etc/environment
+			su - $cmpuser
+			sed -i /nodeplan/d ~/.bashrc
+                        sed -i /nodetype/d ~/.bashrc
+                        sed -i /nodeno/d ~/.bashrc
+                        sed -i /eurekaip/d ~/.bashrc
+			sed -i /eurekaiprep/d ~/.bashrc
+                        sed -i /dcname/d ~/.bashrc
+			
+			echo "umask 077" >> ~/.bashrc
+			echo "CURRENT_DIR=$CURRENT_DIR export CURRENT_DIR" >> ~/.bashrc
+			echo "nodeplan=$nodeplanr export nodeplan">>~/.bashrc
+                        echo "nodetype=$nodetyper export nodetype">>~/.bashrc
+                        echo "nodeno=$nodenor export nodeno">>~/.bashrc 
+                        echo "eurekaip=$eurekaipr export eurekaip">>~/.bashrc
+			echo "eurekaiprep=$eurekaipr export eurekaiprep">>~/.bashrc
+                        echo "dcname=$dcnamer export dcname">>~/.bashrc 
+			source ~/.bashrc
+			exit
+EOF
+		
+		echo "complete..." 
+		done
+		echo_green "配置扩容采集节点环境变量结束..."
+}
+
 #配置iptables
 iptable_internode(){
         echo_green "配置各节点iptables开始..."
         local iptable_path=./iptablescmp.sh
         $iptable_path $SSH_H
-		echo_green "配置各节点iptables结束..."
+	$iptable_path $GF_H
+	echo_green "配置各节点iptables结束..."
 }
 
 #启动cmp
@@ -252,7 +328,7 @@ start_internode(){
 		echo_green "启动CMP开始..."
 		#启动主控节点1或集中式启动串行启动！
 		local k=0
-		for i in "${SSH_HOST[@]}"
+		for i in "${IM_HOST[@]}"
 		do
 			echo "启动节点"$i
 			ssh $i <<EOF
@@ -268,21 +344,13 @@ EOF
 		done
 		
 		#启动其他节点!
-		for i in "${SSH_HOST[@]}"
+		for i in "${IM_HOST[@]}"
 		do
 		if [ "$k" -eq 0 ];then
 			let k=k+1
 			continue
 		fi
 		echo "启动节点"$i
-	#	 ssh $i <<EOF
-	#	 su - $cmpuser
-	#	 source /etc/environment
-	#	 umask 077
-	#	 cd "$CURRENT_DIR"
-	#	 ./startIM_BX.sh
-#		 exit
-#EOF
 		ssh -nf $i 'su - '$cmpuser' -c '$CURRENT_DIR'/startIM_BX.sh >/dev/null'
 		let k=k+1
 		echo "发启启动指令成功"
@@ -290,7 +358,7 @@ EOF
 		
 		#检测其他节点服务是否成功!
 		k=0
-		for i in "${SSH_HOST[@]}"
+		for i in "${IM_HOST[@]}"
 		do
 		if [ "$k" -eq 0 ];then
 			let k=k+1
@@ -311,14 +379,6 @@ EOF
 		echo_green "启动CMP完成..."
 }
 
-#安装单机版mysql5.7
-ssh-mysqlconnect(){
-    echo_green "建立对等互信开始..."
-        local ssh_init_path=./ssh-init.sh
-        $ssh_init_path $MYSQL_H
-        echo_green "建立对等互信完成..."
-        sleep 1
-}
 
 
 echo_yellow "-----------一键安装（增量）说明-------------------"
@@ -332,9 +392,9 @@ echo_green "控制节点节点方案，请输入编号："
 sleep 3
 clear
 echo "1-----allinone服务器,每台32G内存." 
-echo "2-----3台服务器,每台16G内存.2台控制节点，1台采集节点"  
-echo "3-----4台服务器,每台16G内存.3台控制节点，1台采集节点"  
-echo "4-----6台服务器,每台8G内存.5台控制节点，1台采集节点"
+echo "2-----3台服务器(每台16G内存.2台控制节点，1台采集节点) + 扩容采集节点N台"  
+echo "3-----4台服务器(每台16G内存.3台控制节点，1台采集节点) + 扩容采集节点N台"  
+echo "4-----6台服务器(每台8G内存.5台控制节点，1台采集节点) + 扩容采集节点N台"
 
 while read item
 do
@@ -357,6 +417,7 @@ do
 		install-interpackage
 		copy-internode
 		env_internode
+		env_gfnode
 		iptable_internode
 		start_internode
         break
@@ -368,6 +429,7 @@ do
 		install-interpackage
 		copy-internode
 		env_internode
+		env_gfnode
 		iptable_internode
 		start_internode
         break
@@ -379,6 +441,7 @@ do
 		install-interpackage
 		copy-internode
 		env_internode
+		env_gfnode
 		iptable_internode
 		start_internode
         break
