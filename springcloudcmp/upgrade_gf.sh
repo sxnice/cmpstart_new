@@ -25,6 +25,7 @@ GF_H="10.143.132.189 10.143.132.190"
 #-----------------------------------------------
 declare -a GF_HOST=($GF_H)
 declare -a SSH_HOST=($SSH_H)
+declare -a IM_HOST=($SSH_H $GF_H)
 
 #检测操作系统
 check_ostype(){
@@ -128,7 +129,7 @@ EOF
 ssh-interconnect(){
     echo_green "建立对等互信开始..."
 	local ssh_init_path=./ssh-init.sh
-	$ssh_init_path $GF_H
+	$ssh_init_path ${IM_HOST[@]}
 	echo_green "建立对等互信完成..."
 }
 
@@ -276,14 +277,13 @@ EOF
 iptable_internode(){
         echo_green "配置各节点iptables开始..."
         local iptable_path=./iptablescmp.sh
-        $iptable_path $SSH_H
-	$iptable_path $GF_H
+        $iptable_path "${IM_HOST[@]}"
 	echo_green "配置各节点iptables结束..."
 }
 
 #启动im
 start_internode(){
-		echo_green "启动采休开始..."
+		echo_green "启动采集开始..."
 		for i in "${GF_HOST[@]}"
 		do
 		echo "启动节点"$i
