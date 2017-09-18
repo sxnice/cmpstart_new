@@ -23,7 +23,6 @@ SSH_H="10.143.132.187"
 #扩容采集节点组，用空格格开
 GF_H="10.143.132.189 10.143.132.190"
 #-----------------------------------------------
-declare -a IM_HOST=($SSH_H $FG_H)
 declare -a GF_HOST=($GF_H)
 declare -a SSH_HOST=($SSH_H)
 
@@ -213,7 +212,7 @@ env_gfnode(){
 			echo "3-----控制以及采集节点."    
 			read nodetyper 
 			
-			echo "主控制节点IP："  
+			echo "请输入主控制节点IP："  
 			read eurekaipr 
 			fi
 
@@ -284,15 +283,15 @@ iptable_internode(){
 
 #启动im
 start_internode(){
-		echo_green "启动IM开始..."
-		for i in "${IM_HOST[@]}"
+		echo_green "启动采休开始..."
+		for i in "${GF_HOST[@]}"
 		do
 		echo "启动节点"$i
 		ssh -nf $i 'su - '$cmpuser' -c '$CURRENT_DIR'/startIM_BX.sh >/dev/null'
 		echo "发启启动指令成功"
 		done
 		
-		for i in "${IM_HOST[@]}"
+		for i in "${GF_HOST[@]}"
 		do
 		echo "启动节点"$i
 		 ssh $i <<EOF
@@ -305,7 +304,7 @@ start_internode(){
 EOF
 		echo "节点启动成功"
 		done
-		echo_green "启动IM完成..."
+		echo_green "启动采集完成..."
 }
 
 
@@ -320,7 +319,7 @@ echo_yellow "-------------------------------------------"
 echo_green "控制节点节点方案，请输入编号：" 
 sleep 3
 clear
-echo "1-----allinone服务器,每台32G内存." 
+echo "1-----allinone服务器,每台32G内存 + 扩容采集节点N台" 
 echo "2-----3台服务器(每台16G内存.2台控制节点，1台采集节点) + 扩容采集节点N台"  
 echo "3-----4台服务器(每台16G内存.3台控制节点，1台采集节点) + 扩容采集节点N台"  
 echo "4-----6台服务器(每台8G内存.5台控制节点，1台采集节点) + 扩容采集节点N台"
@@ -334,7 +333,7 @@ do
 		user-internode
 		install-interpackage
 		copy-internode
-		env_internode
+		env_gfnode
 		iptable_internode
 		start_internode
         break
@@ -345,7 +344,6 @@ do
 		user-internode
 		install-interpackage
 		copy-internode
-		env_internode
 		env_gfnode
 		iptable_internode
 		start_internode
@@ -357,7 +355,6 @@ do
 		user-internode
 		install-interpackage
 		copy-internode
-		env_internode
 		env_gfnode
 		iptable_internode
 		start_internode
@@ -369,7 +366,6 @@ do
 		user-internode
 		install-interpackage
 		copy-internode
-		env_internode
 		env_gfnode
 		iptable_internode
 		start_internode
