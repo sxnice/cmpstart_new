@@ -127,7 +127,7 @@ EOF
 
 #建立对等互信
 ssh-interconnect(){
-    echo_green "建立对等互信开始..."
+    	echo_green "建立对等互信开始..."
 	local ssh_init_path=./ssh-init.sh
 	$ssh_init_path ${IM_HOST[@]}
 	echo_green "建立对等互信完成..."
