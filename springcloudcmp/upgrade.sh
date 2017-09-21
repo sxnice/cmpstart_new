@@ -178,13 +178,13 @@ copy-internode(){
                         su $cmpuser
                         umask 077
         #               rm -rf "$CURRENT_DIR"/data
-                        mkdir  "$CURRENT_DIR"/data
+                        mkdir -p "$CURRENT_DIR"/data
         #               rm -rf "$CURRENT_DIR"/activemq-data
-                        mkdir  "$CURRENT_DIR"/activemq-data
+                        mkdir -p "$CURRENT_DIR"/activemq-data
                         rm -rf "$CURRENT_DIR"/logs
-                        mkdir  "$CURRENT_DIR"/logs
+                        mkdir -p "$CURRENT_DIR"/logs
                         rm -rf "$CURRENT_DIR"/temp
-                        mkdir  "$CURRENT_DIR"/temp
+                        mkdir -p "$CURRENT_DIR"/temp
                         exit
 EOF
                 echo "complete..."
@@ -244,7 +244,7 @@ iptable_internode(){
         echo_green "配置各节点iptables开始..."
         local iptable_path=./iptablescmp.sh
         $iptable_path $SSH_H
-		echo_green "配置各节点iptables结束..."
+	echo_green "配置各节点iptables结束..."
 }
 
 #启动cmp
@@ -311,22 +311,13 @@ EOF
 		echo_green "启动CMP完成..."
 }
 
-#安装单机版mysql5.7
-ssh-mysqlconnect(){
-    echo_green "建立对等互信开始..."
-        local ssh_init_path=./ssh-init.sh
-        $ssh_init_path $MYSQL_H
-        echo_green "建立对等互信完成..."
-        sleep 1
-}
-
 
 echo_yellow "-----------一键安装（增量）说明-------------------"
 echo_yellow "1、可安装JDK软件;"
 echo_yellow "2、可安装有iptables lsof软件;"
 echo_yellow "3、初始化时，建议使用root用户安装;"
 echo_yellow "4、确保.sh有执行权限，并且使用 ./xxx.sh执行;"
-echo_yellow "5、可配置数据库连接,并更新jce;"
+echo_yellow "5、更新IM;"
 echo_yellow "-------------------------------------------"
 echo_green "控制节点节点方案，请输入编号：" 
 sleep 3
