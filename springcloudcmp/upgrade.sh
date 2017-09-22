@@ -255,14 +255,15 @@ start_internode(){
 		for i in "${SSH_HOST[@]}"
 		do
 			echo "启动节点"$i
-			ssh $i <<EOF
-			su - $cmpuser
-			source /etc/environment
-			umask 077
-			cd "$CURRENT_DIR"
-			./startIM.sh
-			exit
-EOF
+			ssh -n $i 'su - '$cmpuser' -c '$CURRENT_DIR'/startIM.sh'
+		#	ssh $i <<EOF
+		#	su - $cmpuser
+		#	source /etc/environment
+		#	umask 077
+		#	cd "$CURRENT_DIR"
+		#	./startIM.sh
+		#	exit
+#EOF
 			echo "节点"$i"启动完成"
 			break
 		done
