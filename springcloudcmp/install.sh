@@ -278,7 +278,7 @@ env_internode(){
                         sed -i /dcname/d ~/.bashrc
 			
 			echo "umask 077" >> ~/.bashrc
-			echo "CURRENT_DIR=$CURRENT_DIR export CURRENT_DIR" >> ~/.bashrc
+			echo "CMP_DIR=$CURRENT_DIR export CMP_DIR" >> ~/.bashrc
 			echo "nodeplan=$nodeplanr export nodeplan">>~/.bashrc
                         echo "nodetype=$nodetyper export nodetype">>~/.bashrc
                         echo "nodeno=$nodenor export nodeno">>~/.bashrc 
