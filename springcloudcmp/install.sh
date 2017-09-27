@@ -260,13 +260,15 @@ env_internode(){
 			sed -i /eurekaip/d /etc/environment
 			sed -i /eurekaiprep/d /etc/environment
 			sed -i /dcname/d /etc/environment
+			sed -i /CMP_DIR/d /etc/environment
 			
 			echo "nodeplan=$nodeplanr export nodeplan">>/etc/environment
 			echo "nodetype=$nodetyper export nodetype">>/etc/environment
 			echo "nodeno=$nodenor export nodeno">>/etc/environment 
 			echo "eurekaip=$eurekaipr export eurekaip">>/etc/environment
 			echo "eurekaiprep=$eurekaipr export eurekaiprep">>/etc/environment
-			echo "dcname=$dcnamer export dcname">>/etc/environment 			
+			echo "dcname=$dcnamer export dcname">>/etc/environment 
+			echo "CMP_DIR=$CURRENT_DIR export CMP_DIR" >>/etc/environment	
 			source /etc/environment
 
 			su - $cmpuser
@@ -276,6 +278,7 @@ env_internode(){
                         sed -i /eurekaip/d ~/.bashrc
 			sed -i /eurekaiprep/d ~/.bashrc
                         sed -i /dcname/d ~/.bashrc
+			sed -i /CMP_DIR/d  ~/.bashrc
 			
 			echo "umask 077" >> ~/.bashrc
 			echo "CMP_DIR=$CURRENT_DIR export CMP_DIR" >> ~/.bashrc
