@@ -69,6 +69,9 @@ binlog_format = ROW
 relay_log               = relay-bin
 relay_log_index = relay-bin.index
 relay_log_info_file     = relay-bin.info
+expire-logs-days         = 10
+auto_increment_increment = 10 
+auto_increment_offset = 1
 # semi_replication
 plugin-load = "rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so"
 rpl-semi-sync-master-enabled = 1

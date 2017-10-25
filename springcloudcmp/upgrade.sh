@@ -322,52 +322,16 @@ echo_yellow "3、初始化时，建议使用root用户安装;"
 echo_yellow "4、确保.sh有执行权限，并且使用 ./xxx.sh执行;"
 echo_yellow "5、更新IM;"
 echo_yellow "-------------------------------------------"
-echo_green "控制节点节点方案，请输入编号：" 
+echo_green "单机版（小规模）方案，请输入编号：" 
 sleep 3
 clear
-echo "1-----allinone服务器,每台32G内存." 
-echo "2-----3台服务器,每台16G内存.2台控制节点，1台采集节点"  
-echo "3-----4台服务器,每台16G内存.3台控制节点，1台采集节点"  
-echo "4-----6台服务器,每台8G内存.5台控制节点，1台采集节点"
+echo "1-----3台服务器,每台16G内存.2台控制节点，1台采集节点"  
 
 while read item
 do
   case $item in
     [1])
-        nodeplanr=1
-		ssh-interconnect
-		user-internode
-		install-interpackage
-		copy-internode
-		env_internode
-		iptable_internode
-		start_internode
-        break
-        ;;
-    [2])
         nodeplanr=2
-		ssh-interconnect
-		user-internode
-		install-interpackage
-		copy-internode
-		env_internode
-		iptable_internode
-		start_internode
-        break
-        ;;
-    [3])
-        nodeplanr=3
-		ssh-interconnect
-		user-internode
-		install-interpackage
-		copy-internode
-		env_internode
-		iptable_internode
-		start_internode
-        break
-        ;;
-    [4])
-        nodeplanr=4
 		ssh-interconnect
 		user-internode
 		install-interpackage

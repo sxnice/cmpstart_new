@@ -66,14 +66,20 @@ log_bin_index = mysql-bin.index
 relay_log		= relay-bin
 relay_log_index	= relay-bin.index
 relay_log_info_file	= relay-bin.info
+expire-logs-days         = 10
 enforce_gtid_consistency = ON
 gtid_mode = ON
+#做为其他的主节点，去更新从节点日志
 log_slave_updates = ON
 binlog_format = ROW
 skip-slave-start
 plugin-load = "rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so"
 rpl-semi-sync-master-enabled = 1
 rpl-semi-sync-slave-enabled = 1
+
+auto-increment-increment = 10
+auto-increment-offset   = 2
+#read-only=1
 
 [mysqldump]
 quick
