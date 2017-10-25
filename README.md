@@ -22,3 +22,4 @@
 1、把mysqlha目录下的*.cnf放到mysql_5.7.19/support-files目录下；
 2、把mysqlha目录下的mysql.server放到mysql_5.7.19/support-files目录下；
 3、修改mysqlha目录下的*.sh的权限为755;
+# smallcmpinstall
