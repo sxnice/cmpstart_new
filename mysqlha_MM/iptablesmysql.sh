@@ -12,17 +12,16 @@ ssh  $i <<EOF
 		iptables -P INPUT ACCEPT
                 iptables-save >/etc/iptables
                 sed -i /"-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT"/d /etc/iptables
-		sed -i /3306/d /etc/iptables
-		sed -i /icmp/d /etc/iptables
-		sed -i /vrrp/d /etc/iptables
-		sed -i /"224.0.0.0"/d /etc/iptables
+		sed -i /mysqldb/d /etc/iptables
                 iptables-restore </etc/iptables
+		iptables --new mysqldb
 		iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-		iptables -A INPUT -p tcp --dport 3306 -j ACCEPT
-		iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-		iptables -A INPUT -p icmp --icmp-type any -j ACCEPT
-		iptables -A INPUT -i eth0 -p 112 -j ACCEPT
-		iptables -A INPUT -i eth0 -d 224.0.0.0/8 -j ACCEPT
+		iptables -A mysqldb -p tcp --dport 3306 -j ACCEPT
+		iptables -A mysqldb -m state --state ESTABLISHED,RELATED -j ACCEPT
+		iptables -A mysqldb -p icmp --icmp-type any -j ACCEPT
+		iptables -A mysqldb -p 112 -j ACCEPT
+		iptables -A mysqldb -d 224.0.0.0/8 -j ACCEPT
+		iptables -A INPUT -j mysqldb
 		iptables -P INPUT DROP
 		exit
 EOF
